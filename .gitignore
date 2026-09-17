@@ -1,0 +1,7 @@
+# 系统/编辑器杂物
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+.vscode/
+.idea/

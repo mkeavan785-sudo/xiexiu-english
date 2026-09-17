@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>邪修英语 · 速成</title>
+<meta name="theme-color" content="#0b0b0d">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- 发音不可用提示横幅（默认隐藏） -->
+<div id="audio-banner" class="audio-banner hidden">
+  <span id="audio-banner-text"></span>
+  <button id="audio-banner-close" class="banner-close">×</button>
+</div>
+
+<!-- PC 顶部导航 -->
+<header class="topbar">
+  <div class="brand">邪修英语<span class="brand-sub">XIEXIU EN</span></div>
+  <nav class="desktop-nav" id="desktop-nav">
+    <button class="nav-btn active" data-page="immersion">🎧<span>磨耳朵</span></button>
+    <button class="nav-btn" data-page="drill">📖<span>熟读</span></button>
+    <button class="nav-btn" data-page="roots">🌳<span>词根</span></button>
+    <button class="nav-btn" data-page="mine">📓<span>我的</span></button>
+  </nav>
+</header>
+
+<main class="page-wrap">
+
+  <!-- ============ 磨耳朵 ============ -->
+  <section class="page active" id="page-immersion">
+    <div class="mode-switch">
+      <button class="mode-btn active" data-mode="words">单词</button>
+      <button class="mode-btn" data-mode="sentences" id="mode-sentences-btn">句子</button>
+    </div>
+
+    <div class="player-card">
+      <div class="scene-bar" id="scene-bar">
+        <span class="scene-dot">场景</span>
+        <span class="scene-name" id="scene-label">起床洗漱</span>
+        <button class="next-group-btn" id="p-nextgroup">下一组 →</button>
+      </div>
+
+      <div class="player-stage" id="word-stage">
+        <div class="word-en" id="p-en">wake up</div>
+        <div class="word-ipa" id="p-ipa">场景 1/14 · 起床洗漱</div>
+        <div class="word-zh" id="p-zh">醒来；叫醒</div>
+      </div>
+
+      <div class="player-meta">
+        <span id="p-progress">本组 1/16</span>
+        <button class="icon-btn" id="p-replay" title="重听">🔊</button>
+      </div>
+
+      <button class="play-main" id="p-play">▶ 播放</button>
+
+      <div class="player-ctl">
+        <button class="ctl-btn" id="p-prev">⏮<span>上一个</span></button>
+        <button class="ctl-btn ctl-restart" id="p-restart">↺<span>从头开始</span></button>
+        <button class="ctl-btn" id="p-next">⏭<span>下一个</span></button>
+      </div>
+
+      <div class="player-settings">
+        <label>语速
+          <select id="opt-rate">
+            <option value="0.75">0.75×</option>
+            <option value="0.9">0.9×</option>
+            <option value="1" selected>1.0×</option>
+            <option value="1.2">1.2×</option>
+          </select>
+        </label>
+        <label>间隔
+          <select id="opt-gap">
+            <option value="1000">1秒</option>
+            <option value="2000" selected>2秒</option>
+            <option value="3000">3秒</option>
+          </select>
+        </label>
+        <label id="wrap-enrepeat" class="hidden">英文遍数
+          <select id="opt-enrepeat">
+            <option value="1">1 遍</option>
+            <option value="2" selected>2 遍</option>
+            <option value="3">3 遍</option>
+          </select>
+        </label>
+        <label class="switch-label">常亮
+          <input type="checkbox" id="opt-wake" checked>
+        </label>
+      </div>
+
+      <p class="player-tip">提示：磨耳朵时请保持本页在前台（锁屏后台播放将在 v1.1 支持）。每轮自动乱序循环。</p>
+    </div>
+  </section>
+
+  <!-- ============ 熟读 ============ -->
+  <section class="page" id="page-drill">
+    <!-- 今日概览 -->
+    <div class="drill-head">
+      <div class="drill-dayline">
+        <span class="drill-day">第 <b id="dr-day">1</b> / 7 天</span>
+        <span class="drill-streak">🔥 连续 <b id="dr-streak">0</b> 天</span>
+      </div>
+      <div class="drill-stage" id="dr-stage-name">阶段1 · 短元音 CVC</div>
+      <div class="drill-bar"><i id="dr-bar" style="width:0%"></i></div>
+      <div class="drill-sub"><span id="dr-group-progress">0 / 5 组</span><span>今日阶段每天自动轮转，一组三词</span></div>
+    </div>
+
+    <!-- 阶段选择（可加练其他阶段） -->
+    <div class="stage-chips" id="dr-stage-chips"></div>
+
+    <!-- 组卡片 -->
+    <div class="drill-card" id="dr-card">
+      <div class="dr-group-top">
+        <span class="dr-group-title" id="dr-group-title">短元音 a</span>
+        <span class="dr-pattern" id="dr-pattern">/æ/ 如 cat</span>
+      </div>
+      <p class="dr-tip" id="dr-tip"></p>
+      <div class="dr-words" id="dr-words"></div>
+      <button class="play-main" id="dr-readall">🔊 整组连读</button>
+      <button class="dr-next-btn" id="dr-next">读完了，下一组 →</button>
+    </div>
+
+    <!-- 完成态 -->
+    <div class="drill-done hidden" id="dr-done">
+      <div class="done-emoji">🎉</div>
+      <h2 id="dr-done-title">今日熟读完成</h2>
+      <p id="dr-done-sub">明天进入下一阶段，连续打卡别断</p>
+      <button class="dr-review-btn" id="dr-review">回看今日词组</button>
+    </div>
+  </section>
+
+  <!-- ============ 词根 ============ -->
+  <section class="page" id="page-roots">
+    <div class="roots-head">
+      <div class="roots-title">🌳 词根库 <span id="roots-count" class="roots-count"></span></div>
+      <input type="search" id="roots-search" class="roots-search" placeholder="搜单词 / 中文 / 词根（如 port、安装）">
+    </div>
+    <div id="roots-list" class="roots-list"></div>
+    <div id="roots-empty" class="roots-empty hidden">没有匹配的词根</div>
+  </section>
+
+  <!-- ============ 我的 ============ -->
+  <section class="page" id="page-mine">
+    <!-- 统计 -->
+    <div class="stat-grid">
+      <div class="stat-cell"><b id="st-streak">0</b><span>连续打卡(天)</span></div>
+      <div class="stat-cell"><b id="st-listen">0</b><span>磨耳朵(条)</span></div>
+      <div class="stat-cell"><b id="st-scenes">213</b><span>场景词(条)</span></div>
+      <div class="stat-cell"><b id="st-mysents">0</b><span>我的句(条)</span></div>
+    </div>
+
+    <!-- 操作区 -->
+    <div class="mine-actions">
+      <button class="mine-action" id="btn-import">📋 粘贴导入句子</button>
+      <button class="mine-action" id="btn-export">⬇ 导出备份</button>
+      <button class="mine-action" id="btn-importfile">⬆ 导入恢复</button>
+      <input type="file" id="restore-file" accept=".json,application/json" class="hidden">
+    </div>
+
+    <!-- 批量导入面板（仅句子：配音稿/话术） -->
+    <div class="mine-panel hidden" id="panel-import">
+      <p class="panel-hint">把英文配音稿、现场话术整段粘进来，每行一句，支持：<br>
+        ① <code>Hold it!|停！</code>（竖线分隔中英）<br>
+        ② <code>Tighten it up. 拧紧。</code>（中英空格混排）<br>
+        ③ 纯英文一行（中文留空）<br>
+        导入后进磨耳朵「句子」模式轮播。</p>
+      <textarea id="import-text" class="mine-textarea"
+        placeholder="Check the gap. It’s too wide. | 看下缝，太大了。&#10;Tighten it up. | 拧紧。"></textarea>
+      <button class="panel-confirm primary" id="import-assents">导入句子</button>
+    </div>
+
+    <!-- 备份提示面板（粘贴兜底） -->
+    <div class="mine-panel hidden" id="panel-backup">
+      <p class="panel-hint" id="backup-hint">若没有自动下载：长按全选下面内容，复制保存为 .json 文件。</p>
+      <textarea id="backup-text" class="mine-textarea small" readonly></textarea>
+    </div>
+
+    <!-- 我的句 列表 -->
+    <div class="mine-tabs">
+      <button class="mine-tab active">我的句子 <i id="tab-sents-n">0</i></button>
+    </div>
+    <div id="my-list" class="my-list"></div>
+    <div id="my-empty" class="roots-empty">还没有导入句子，点上方「粘贴导入句子」添加</div>
+
+    <!-- 学习设置 -->
+    <div class="mine-settings">
+      <h3>学习设置</h3>
+      <label class="setting-row">
+        <span>发音口音</span>
+        <select id="set-accent">
+          <option value="us">美音（默认）</option>
+          <option value="gb">英音</option>
+        </select>
+      </label>
+      <label class="setting-row switch-row">
+        <span>熟读包含「阶段0 字母单音」（8天一轮）</span>
+        <input type="checkbox" id="set-letters">
+      </label>
+      <p class="setting-note">所有学习数据仅保存在本设备浏览器，清理浏览器数据前请先导出备份。</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- 手机底部导航 -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-btn active" data-page="immersion"><span class="nav-ico">🎧</span><span>磨耳朵</span></button>
+  <button class="nav-btn" data-page="drill"><span class="nav-ico">📖</span><span>熟读</span></button>
+  <button class="nav-btn" data-page="roots"><span class="nav-ico">🌳</span><span>词根</span></button>
+  <button class="nav-btn" data-page="mine"><span class="nav-ico">📓</span><span>我的</span></button>
+</nav>
+
+<!-- 数据文件（普通 script，file:// 双击可用；顺序不可乱） -->
+<script src="assets/js/data-phonics.js"></script>
+<script src="assets/js/data-roots.js"></script>
+<script src="assets/js/data-sentences.js"></script>
+<script src="assets/js/data-immersion.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/audio.js"></script>
+<script src="assets/js/immersion.js"></script>
+<script src="assets/js/drill.js"></script>
+<script src="assets/js/roots.js"></script>
+<script src="assets/js/my.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
