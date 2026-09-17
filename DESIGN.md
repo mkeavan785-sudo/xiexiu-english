@@ -3,6 +3,8 @@
 > 日期：2026-09-17
 > 定位：上班磨耳朵为主、碎片熟读为辅的英语基本盘工具
 > 使用者：安装工艺工程师（海外现场配合、英文配音/字幕场景）
+> 线上地址：https://mkeavan785-sudo.github.io/xiexiu-english/
+> 仓库：https://github.com/mkeavan785-sudo/xiexiu-english （GitHub Pages，main 根目录 legacy 部署）
 
 ## 1. 目标与非目标
 
