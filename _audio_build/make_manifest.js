@@ -74,6 +74,10 @@ function build(lang, set) {
   return { map, missing };
 }
 
+/* ---- 同步写出 texts.json（gen_tts.py 的输入，单一数据源） ---- */
+fs.writeFileSync(path.join(__dirname, 'texts.json'),
+  JSON.stringify({ en: [...en].sort(), zh: [...zh].sort() }, null, 0), 'utf8');
+
 const enRes = build('en', en);
 const zhRes = build('zh', zh);
 

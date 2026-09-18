@@ -2,7 +2,7 @@
    邪修英语 · 熟读 drill.js
    规则：7 阶段每日轮转（epochDay % 7 → 阶段1-7）
         每组当天用日期种子随机抽 3 词，当天重开看到同样三词
-        优先抽最近 2 天没出现过的词；完成今日全部组即打卡
+        优先抽最近 2 天没出现过的词；完成今日全部组即展示完成态
    ============================================================ */
 (function () {
   var el = {};
@@ -103,19 +103,9 @@
     return stage(TODAY_STAGE).groups.every(function (g) { return isDone(g.id); });
   }
 
-  function checkIn() {
-    var stats = Store.get().stats;
-    if (stats.lastDay === TODAY) return; // 今天已打卡
-    var yest = dateStr(new Date(Date.now() - 86400000));
-    stats.streak = (stats.lastDay === yest) ? (stats.streak || 0) + 1 : 1;
-    stats.lastDay = TODAY;
-    Store.save();
-  }
-
   /* ---------- 渲染 ---------- */
   function renderHead() {
     el.day.textContent = TODAY_STAGE;
-    el.streak.textContent = Store.get().stats.streak || 0;
     var st = stage(TODAY_STAGE);
     el.stageName.textContent = '今日：阶段' + st.id + ' · ' + st.name;
     var total = st.groups.length;
@@ -186,8 +176,7 @@
   function showDone() {
     el.card.classList.add('hidden');
     el.doneBox.classList.remove('hidden');
-    var stats = Store.get().stats;
-    el.doneTitle.textContent = '今日熟读完成 · 已连续 ' + (stats.streak || 1) + ' 天';
+    el.doneTitle.textContent = '今日熟读完成';
     var nextId = (TODAY_STAGE % 7) + 1;
     el.doneSub.textContent = '明天进入：阶段' + nextId + ' · ' + stage(nextId).name;
   }
@@ -238,7 +227,6 @@
       var g = st.groups[groupIdx];
       if (!isDone(g.id)) doneList().push(g.id);
       if (todayComplete()) {
-        checkIn();
         renderHead();
         renderChips();
         showDone();
@@ -265,7 +253,6 @@
   function init() {
     el = {
       day: document.getElementById('dr-day'),
-      streak: document.getElementById('dr-streak'),
       stageName: document.getElementById('dr-stage-name'),
       bar: document.getElementById('dr-bar'),
       groupProgress: document.getElementById('dr-group-progress'),

@@ -103,11 +103,77 @@
   /* ---------- 统计 ---------- */
   function renderStats() {
     var s = data();
-    el.stStreak.textContent = s.stats.streak || 0;
     el.stListen.textContent = s.stats.listenWords || 0;
     el.stScenes.textContent = window.IMMERSION ? IMMERSION.total() : 0;
     el.stMysents.textContent = s.mySentences.length;
   }
+
+  /* ---------- 音频补充包 ---------- */
+  var loadingPack = null;   // 防止同包并发加载
+
+  function packStatusText(st) {
+    return st === 'cached' ? '已缓存 · 可离线'
+         : st === 'outdated' ? '词库有更新，建议重载' : '未加载';
+  }
+
+  function renderPacks() {
+    var box = el.packsList;
+    if (!box) return;
+    box.innerHTML = '';
+    var packs = AudioPacks.all();
+    var cachedN = packs.filter(function (p) { return AudioPacks.status(p) === 'cached'; }).length;
+    if (el.packsNote) el.packsNote.textContent = '已缓存 ' + cachedN + '/' + packs.length + ' 包';
+
+    packs.forEach(function (pack) {
+      var st = AudioPacks.status(pack);
+      var row = document.createElement('div');
+      row.className = 'pack-row st-' + st;
+      row.innerHTML =
+        '<div class="pack-info">' +
+          '<b>' + escapeHtml(pack.name) + '</b>' +
+          '<span>' + pack.items.length + ' 条 · ' + packStatusText(st) + '</span>' +
+        '</div>' +
+        '<div class="pack-bar"><i></i></div>' +
+        '<button class="pack-btn">' +
+          (st === 'cached' ? '✓ 已载' : (st === 'outdated' ? '↻ 更新' : '↓ 加载')) +
+        '</button>';
+
+      var btn = row.querySelector('.pack-btn');
+      var bar = row.querySelector('.pack-bar i');
+      if (st === 'cached') {
+        btn.disabled = true;
+      } else {
+        btn.addEventListener('click', function () {
+          if (loadingPack) { App.notify('有包正在加载，请稍候'); return; }
+          loadingPack = pack.id;
+          btn.disabled = true;
+          row.classList.add('loading');
+          AudioEngine.preloadPack(AudioPacks.urls(pack), function (d, t) {
+            bar.style.width = Math.round(d / t * 100) + '%';
+            btn.textContent = Math.round(d / t * 100) + '%';
+          }).then(function (r) {
+            loadingPack = null;
+            if (r.ok) {
+              AudioPacks.markDone(pack.id);
+              renderPacks();
+              App.notify('「' + pack.name + '」已缓存，可离线播放', 2400);
+            } else {
+              btn.disabled = false;
+              btn.textContent = st === 'outdated' ? '↻ 更新' : '↓ 加载';
+              App.notify('部分音频加载失败，请检查网络后重试');
+            }
+          }).catch(function () {
+            loadingPack = null;
+            btn.disabled = false;
+            btn.textContent = st === 'outdated' ? '↻ 更新' : '↓ 加载';
+            App.notify('加载失败，请检查网络后重试');
+          });
+        });
+      }
+      box.appendChild(row);
+    });
+  }
+  function refreshPacks() { renderPacks(); }
 
   function refreshAll() { renderStats(); renderList(); }
 
@@ -153,7 +219,6 @@
   /* ---------- 初始化 ---------- */
   function init() {
     el = {
-      stStreak: document.getElementById('st-streak'),
       stListen: document.getElementById('st-listen'),
       stScenes: document.getElementById('st-scenes'),
       stMysents: document.getElementById('st-mysents'),
@@ -169,7 +234,8 @@
       list: document.getElementById('my-list'),
       empty: document.getElementById('my-empty'),
       tabSentsN: document.getElementById('tab-sents-n'),
-      setAccent: document.getElementById('set-accent'),
+      packsList: document.getElementById('packs-list'),
+      packsNote: document.getElementById('packs-note'),
       setLetters: document.getElementById('set-letters')
     };
 
@@ -182,12 +248,7 @@
     });
     el.importSents.addEventListener('click', doImport);
 
-    el.setAccent.value = Store.settings().accent;
     el.setLetters.checked = !!Store.settings().lettersStage;
-    el.setAccent.addEventListener('change', function () {
-      Store.settings({ accent: el.setAccent.value });
-      AudioEngine.setAccent(el.setAccent.value);
-    });
     el.setLetters.addEventListener('change', function () {
       Store.settings({ lettersStage: el.setLetters.checked });
       App.notify(el.setLetters.checked ? '熟读将包含字母阶段，8 天一轮。' : '已恢复 7 天一轮。', 2200);
@@ -195,9 +256,10 @@
     });
 
     refreshAll();
+    renderPacks();
   }
 
-  function onShow() { if (el.stStreak) refreshAll(); }
+  function onShow() { refreshAll(); renderPacks(); }
 
-  window.My = { init: init, onShow: onShow };
+  window.My = { init: init, onShow: onShow, refreshPacks: refreshPacks };
 })();

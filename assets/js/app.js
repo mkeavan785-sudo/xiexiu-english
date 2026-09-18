@@ -53,10 +53,7 @@
       btn.addEventListener('click', function () { go(btn.dataset.page); });
     });
 
-    // 设置 → 发音引擎
-    AudioEngine.setAccent(Store.settings().accent);
-
-    // 模块初始化
+    // 模块初始化（发音已固定英音，无需设置）
     Immersion.init();
     Drill.init();
     Roots.init();

@@ -10,6 +10,16 @@
 </head>
 <body>
 
+<!-- 载入页：首包音频加载进度（完成后淡出移除） -->
+<div id="boot" class="boot">
+  <div class="boot-box">
+    <div class="boot-logo">🎧 邪修英语</div>
+    <div class="boot-tip" id="boot-tip">引擎加载中…</div>
+    <div class="boot-bar"><i id="boot-bar"></i></div>
+    <div class="boot-sub">首次加载后可离线播放 · 其余音频在「我的 → 音频补充包」按需加载</div>
+  </div>
+</div>
+
 <!-- 发音不可用提示横幅（默认隐藏） -->
 <div id="audio-banner" class="audio-banner hidden">
   <span id="audio-banner-text"></span>
@@ -101,7 +111,6 @@
     <div class="drill-head">
       <div class="drill-dayline">
         <span class="drill-day">第 <b id="dr-day">1</b> / 7 天</span>
-        <span class="drill-streak">🔥 连续 <b id="dr-streak">0</b> 天</span>
       </div>
       <div class="drill-stage" id="dr-stage-name">阶段1 · 短元音 CVC</div>
       <div class="drill-bar"><i id="dr-bar" style="width:0%"></i></div>
@@ -146,7 +155,6 @@
   <section class="page" id="page-mine">
     <!-- 统计 -->
     <div class="stat-grid">
-      <div class="stat-cell"><b id="st-streak">0</b><span>连续打卡(天)</span></div>
       <div class="stat-cell"><b id="st-listen">0</b><span>磨耳朵(条)</span></div>
       <div class="stat-cell"><b id="st-scenes">213</b><span>场景词(条)</span></div>
       <div class="stat-cell"><b id="st-mysents">0</b><span>我的句(条)</span></div>
@@ -185,21 +193,20 @@
     <div id="my-list" class="my-list"></div>
     <div id="my-empty" class="roots-empty">还没有导入句子，点上方「粘贴导入句子」添加</div>
 
+    <!-- 音频补充包：按需加载，Cache Storage 离线可用 -->
+    <div class="mine-packs">
+      <h3>音频补充包 <span id="packs-note" class="packs-note"></span></h3>
+      <div id="packs-list" class="packs-list"></div>
+    </div>
+
     <!-- 学习设置 -->
     <div class="mine-settings">
       <h3>学习设置</h3>
-      <label class="setting-row">
-        <span>发音口音</span>
-        <select id="set-accent">
-          <option value="us">美音（默认）</option>
-          <option value="gb">英音</option>
-        </select>
-      </label>
       <label class="setting-row switch-row">
         <span>熟读包含「阶段0 字母单音」（8天一轮）</span>
         <input type="checkbox" id="set-letters">
       </label>
-      <p class="setting-note">所有学习数据仅保存在本设备浏览器，清理浏览器数据前请先导出备份。</p>
+      <p class="setting-note">发音已统一为英式。所有学习数据仅保存在本设备浏览器，清理浏览器数据前请先导出备份。</p>
     </div>
   </section>
 
@@ -224,7 +231,9 @@
 <script src="assets/js/immersion.js"></script>
 <script src="assets/js/drill.js"></script>
 <script src="assets/js/roots.js"></script>
+<script src="assets/js/packs.js"></script>
 <script src="assets/js/my.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/boot.js"></script>
 </body>
 </html>

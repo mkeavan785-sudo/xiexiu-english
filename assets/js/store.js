@@ -7,7 +7,6 @@
 
   var DEFAULTS = {
     settings: {
-      accent: 'us',      // us / gb
       rate: 1,           // 语速
       gap: 1500,         // 中英之间停顿 ms
       enRepeat: 2,       // 句模式英文连读次数
@@ -19,7 +18,7 @@
     fed: [],             // 历史字段（v1.1前词根喂养，已停用，保留兼容）
     myWords: [],         // 历史字段（单词外部导入已停用，保留兼容）
     mySentences: [],     // 自定义句子（配音稿/话术导入）
-    stats: { streak: 0, lastDay: null, listenWords: 0, listenMs: 0 }
+    stats: { listenWords: 0, listenMs: 0 }  // 打卡字段已随功能移除（旧数据残留无害）
   };
 
   var state = null;
