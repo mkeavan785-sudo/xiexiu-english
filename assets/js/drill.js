@@ -141,6 +141,8 @@
     var st = stage(stageId);
     var g = st.groups[groupIdx];
     var words = drawWords(g);
+    // 组卡出现即预热整组发音，点读/连读不等网络
+    words.forEach(function (w) { AudioEngine.preload('en', w.w); });
 
     el.groupTitle.textContent = '第 ' + (groupIdx + 1) + ' 组 · ' + g.title;
     el.pattern.textContent = g.pattern;

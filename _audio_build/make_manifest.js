@@ -77,16 +77,21 @@ function build(lang, set) {
 const enRes = build('en', en);
 const zhRes = build('zh', zh);
 
-/* ---- 写出清单（键按字典序，便于 diff） ---- */
+/* ---- 写出清单（键按字典序；值为md5前12位，路径由 audio.js 运行时拼接，省40%体积） ---- */
 function sortKeys(o) {
   return Object.keys(o).sort().reduce((acc, k) => (acc[k] = o[k], acc), {});
 }
+function toHashes(map) {
+  const out = {};
+  Object.keys(map).forEach(k => { out[k] = path.basename(map[k], '.mp3'); });
+  return sortKeys(out);
+}
 const out =
   '/* 自动生成：_audio_build/make_manifest.js —— 请勿手工编辑\n' +
-  '   文本→本地MP3映射（md5(lang|text) 前12位），覆盖 ' +
+  '   文本→MP3哈希（md5(lang|text) 前12位），路径 audio.js 运行时拼，覆盖 ' +
   Object.keys(enRes.map).length + ' 英 + ' + Object.keys(zhRes.map).length + ' 中 */\n' +
   'window.AUDIO_MANIFEST = ' +
-  JSON.stringify({ en: sortKeys(enRes.map), zh: sortKeys(zhRes.map) }, null, 0) + ';\n';
+  JSON.stringify({ en: toHashes(enRes.map), zh: toHashes(zhRes.map) }, null, 0) + ';\n';
 
 const outFile = path.join(JS, 'audio-manifest.js');
 fs.writeFileSync(outFile, out, 'utf8');

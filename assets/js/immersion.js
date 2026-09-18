@@ -93,6 +93,9 @@
     el.zh.textContent = it.zh;
     el.progress.textContent = '本组 ' + (iIdx + 1) + '/' + sc.items.length;
     el.sceneLabel.textContent = sc.name;
+    // 打开页面/切词即预热当前条音频，点播放不用等网络
+    AudioEngine.preload('en', it.w);
+    AudioEngine.preload('zh', it.zh);
   }
   function showSentence() {
     var item = sQueue[sPos];
@@ -103,6 +106,8 @@
     el.ipa.textContent = item.sc && sc ? '【' + sc.name + '】' : '【我的句子】';
     el.zh.textContent = item.zh || '';
     el.progress.textContent = (sPos + 1) + ' / ' + sQueue.length;
+    AudioEngine.preload('en', item.en);
+    AudioEngine.preload('zh', item.zh || '');
   }
   function show() { mode === 'words' ? showWord() : showSentence(); }
 
@@ -118,6 +123,11 @@
         return AudioEngine.speakEn(it.w, s.rate).then(function (ok) {
           if (!playing || token !== loopToken) return;
           if (!ok) warn('当前环境无法发音：系统语音不可用，在线发音也失败，请检查网络或系统语音。');
+          // 英文播完的间隙预热：当前中文 + 下一条英文，循环无缝
+          AudioEngine.preload('zh', it.zh);
+          var sc = scenes()[sIdx];
+          var nx = sc.items[(iIdx + 1) % sc.items.length];
+          if (nx) AudioEngine.preload('en', nx.w);
           return wait(s.gap);
         }).then(function () {
           if (!playing || token !== loopToken) return;
@@ -141,6 +151,9 @@
         return wait(s.gap);
       }).then(function () {
         if (!playing || token !== loopToken) return;
+        // 中文播完的间隙预热下一句英文
+        var nx = sQueue[(sPos + 1) % sQueue.length];
+        if (nx) AudioEngine.preload('en', nx.en);
         var reps = s.enRepeat || 1;
         var chain = Promise.resolve();
         for (var i = 0; i < reps; i++) {

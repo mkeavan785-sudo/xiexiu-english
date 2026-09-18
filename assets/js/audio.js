@@ -29,9 +29,11 @@
   var LANG_VOLUME = { en: 1.0, zh: 0.9 };
 
   /* ================= ① 本地 MP3 ================= */
+  /* 清单只存哈希前12位（减体积），路径在这里拼 */
   function localPath(lang, text) {
     var t = norm(text);
-    return (lang === 'zh' ? manifest.zh[t] : manifest.en[t]) || null;
+    var h = lang === 'zh' ? manifest.zh[t] : manifest.en[t];
+    return h ? 'assets/audio/' + lang + '/' + h + '.mp3' : null;
   }
 
   function playLocal(lang, text, rate) {
