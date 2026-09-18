@@ -23,14 +23,21 @@
     }
     function onProgress(d, t) { done = d; total = t; update(); }
 
+    var shownAt = Date.now();
+    var MIN_SHOW = 2200;   // 介绍栏最短停留（首包秒载时也让人读完标题）
+
     function finish(completed) {
       if (boot.classList.contains('boot-done')) return;
-      boot.classList.add('boot-done');       // CSS 淡出
-      setTimeout(function () { boot.remove(); }, 450);
-      if (completed) {
-        ids.forEach(function (id) { AudioPacks.markDone(id); });
-        if (window.My && My.refreshPacks) My.refreshPacks();
-      }
+      // 最短展示时间：保证介绍可读；超时路径 wait=0 立即放行
+      var wait = Math.max(0, MIN_SHOW - (Date.now() - shownAt));
+      setTimeout(function () {
+        boot.classList.add('boot-done');       // CSS 淡出（卡片微上移）
+        setTimeout(function () { boot.remove(); }, 550);
+        if (completed) {
+          ids.forEach(function (id) { AudioPacks.markDone(id); });
+          if (window.My && My.refreshPacks) My.refreshPacks();
+        }
+      }, wait);
     }
 
     // 15 秒兜底：未载完也放行（后台继续），不打扰使用
