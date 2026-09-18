@@ -9,7 +9,7 @@
     settings: {
       accent: 'us',      // us / gb
       rate: 1,           // 语速
-      gap: 2000,         // 中英之间停顿 ms
+      gap: 1500,         // 中英之间停顿 ms
       enRepeat: 2,       // 句模式英文连读次数
       wakeLock: true,    // 磨耳朵常亮
       lettersStage: false// 熟读是否包含阶段0字母（M2）
