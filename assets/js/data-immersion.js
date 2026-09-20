@@ -290,6 +290,132 @@ window.IMMERSION = {
         {w:'keep the receipt', zh:'留好小票'},
         {w:'keep the change', zh:'不用找零'}
       ]
+    },
+    {
+      name: '超市购物',
+      items: [
+        {w:'shopping list', zh:'购物清单'},
+        {w:'shopping cart', zh:'购物车'},
+        {w:'shopping basket', zh:'购物篮'},
+        {w:'aisle', zh:'货架通道'},
+        {w:'on sale', zh:'特价中'},
+        {w:'price tag', zh:'价签'},
+        {w:'expiry date', zh:'保质期'},
+        {w:'instant noodles', zh:'方便面'},
+        {w:'bottled water', zh:'瓶装水'},
+        {w:'snacks', zh:'零食'},
+        {w:'fruit and veggies', zh:'果蔬'},
+        {w:'checkout counter', zh:'收银台'},
+        {w:'cash or card', zh:'现金还是刷卡'},
+        {w:'receipt', zh:'购物小票'},
+        {w:'plastic bag', zh:'塑料袋'},
+        {w:'bring your own bag', zh:'自带购物袋'}
+      ]
+    },
+    {
+      name: '地面交通',
+      items: [
+        {w:'taxi stand', zh:'出租车上客点'},
+        {w:'hail a taxi', zh:'招手打车'},
+        {w:'ride-hailing app', zh:'打车软件'},
+        {w:'one-way trip', zh:'单程'},
+        {w:'meter', zh:'计价器'},
+        {w:'fare', zh:'车费'},
+        {w:'drop me off here', zh:'在这里放下我'},
+        {w:'keep the change', zh:'不用找了'},
+        {w:'bus stop', zh:'公交站'},
+        {w:'get on', zh:'上车'},
+        {w:'get off', zh:'下车'},
+        {w:'transfer', zh:'换乘'},
+        {w:'metro station', zh:'地铁站'},
+        {w:'ticket machine', zh:'自助售票机'},
+        {w:'traffic jam', zh:'堵车'},
+        {w:'take a detour', zh:'绕路'}
+      ]
+    },
+    {
+      name: '药店就医',
+      items: [
+        {w:'pharmacy', zh:'药店'},
+        {w:'drugstore', zh:'药妆店'},
+        {w:'painkiller', zh:'止痛药'},
+        {w:'cold medicine', zh:'感冒药'},
+        {w:'stomachache', zh:'胃疼'},
+        {w:'fever', zh:'发烧'},
+        {w:'cough', zh:'咳嗽'},
+        {w:'band-aid', zh:'创可贴'},
+        {w:'ointment', zh:'药膏'},
+        {w:'allergic to', zh:'对……过敏'},
+        {w:'prescription', zh:'处方'},
+        {w:'dosage', zh:'用法用量'},
+        {w:'take twice a day', zh:'一天吃两次'},
+        {w:'clinic', zh:'诊所'},
+        {w:'emergency room', zh:'急诊室'},
+        {w:'health insurance', zh:'医疗保险'}
+      ]
+    },
+    {
+      name: '住宿酒店',
+      items: [
+        {w:'check in', zh:'入住登记'},
+        {w:'check out', zh:'退房'},
+        {w:'reservation', zh:'预订'},
+        {w:'room card', zh:'房卡'},
+        {w:'deposit', zh:'押金'},
+        {w:'front desk', zh:'前台'},
+        {w:'single room', zh:'单人间'},
+        {w:'twin room', zh:'双床房'},
+        {w:'breakfast included', zh:'含早餐'},
+        {w:'room service', zh:'客房服务'},
+        {w:'towels', zh:'毛巾'},
+        {w:'air conditioning', zh:'空调'},
+        {w:'hot water', zh:'热水'},
+        {w:'wifi password', zh:'无线密码'},
+        {w:'wake-up call', zh:'叫醒服务'},
+        {w:'extend my stay', zh:'延长住宿'}
+      ]
+    },
+    {
+      name: '手机卡与网络',
+      items: [
+        {w:'sim card', zh:'电话卡'},
+        {w:'prepaid card', zh:'预付卡'},
+        {w:'data plan', zh:'流量套餐'},
+        {w:'top up', zh:'充值'},
+        {w:'local number', zh:'本地号码'},
+        {w:'plug adapter', zh:'转换插头'},
+        {w:'voltage', zh:'电压'},
+        {w:'charger', zh:'充电器'},
+        {w:'power bank', zh:'充电宝'},
+        {w:'charging cable', zh:'数据线'},
+        {w:'hotspot', zh:'手机热点'},
+        {w:'no signal', zh:'没信号'},
+        {w:'slow connection', zh:'网速慢'},
+        {w:'connect to wifi', zh:'连无线网'},
+        {w:'roaming', zh:'漫游'},
+        {w:'screen cracked', zh:'屏幕碎了'}
+      ]
+    },
+    {
+      name: '天气与寒暄',
+      items: [
+        {w:'weather forecast', zh:'天气预报'},
+        {w:'sunny', zh:'晴天'},
+        {w:'cloudy', zh:'多云'},
+        {w:'raining', zh:'下雨'},
+        {w:'windy', zh:'起风了'},
+        {w:'freezing', zh:'冷得要命'},
+        {w:'scorching', zh:'热得要命'},
+        {w:'umbrella', zh:'雨伞'},
+        {w:'raincoat', zh:'雨衣'},
+        {w:'where are you from', zh:'你来自哪里'},
+        {w:'how long is your stay', zh:'你待多久'},
+        {w:'what do you do', zh:'你做什么工作'},
+        {w:'nice to meet you', zh:'幸会'},
+        {w:'see you tomorrow', zh:'明天见'},
+        {w:'take care', zh:'保重'},
+        {w:'have a good one', zh:'祝顺利'}
+      ]
     }
   ]
 };
