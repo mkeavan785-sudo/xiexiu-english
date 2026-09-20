@@ -51,18 +51,41 @@
   /** 供分包模块用：文本 → MP3 URL（不在清单内返回 null） */
   function urlOf(lang, text) { return localPath(lang, text); }
 
-  /** 预取单条：fetch → Cache Storage；命中即跳过；失败静默（播放时再取） */
+  /** 预取单条：fetch → Cache Storage；命中即跳过；失败静默（播放时再取）。
+      性能约定：去重防重复下载 + 串行队列一次一条 + 音频传输期自动让行，
+      预热绝不与播放抢带宽（弱网卡顿的根因就是并发抢流） */
+  var prefetched = {};        // src 去重（进行中或已完成）
+  var prefetchTail = Promise.resolve();   // 串行队列尾
+  var mediaBusy = false;      // 音频正在传输（播放中让行标志）
+
+  function idleDelay(ms) {
+    return new Promise(function (res) { setTimeout(res, ms); });
+  }
+
   function prefetch(src) {
-    if (!cacheP || !src) return Promise.resolve(false);
-    return cacheP.then(function (c) {
-      return c.match(src).then(function (hit) {
-        if (hit) return true;
-        return fetch(src, { mode: 'same-origin' }).then(function (resp) {
-          if (!resp.ok) return false;
-          return c.put(src, resp.clone()).then(function () { return true; });
+    if (!cacheP || !src || prefetched[src]) return Promise.resolve(false);
+    prefetched[src] = true;
+    prefetchTail = prefetchTail.then(function () {
+      // 让行：音频在传输就等，最多等 6 秒防止死等
+      var waited = 0;
+      function waitIdle() {
+        if (!mediaBusy || waited >= 6000) return Promise.resolve();
+        waited += 250;
+        return idleDelay(250).then(waitIdle);
+      }
+      return waitIdle().then(function () {
+        return cacheP.then(function (c) {
+          return c.match(src).then(function (hit) {
+            if (hit) return true;
+            return fetch(src, { mode: 'same-origin' }).then(function (resp) {
+              if (!resp.ok) return false;
+              return c.put(src, resp.clone()).then(function () { return true; });
+            }).catch(function () { return false; });
+          });
         }).catch(function () { return false; });
       });
-    }).catch(function () { return false; });
+    });
+    return prefetchTail;
   }
 
   /* 缓存 Response → blob URL（移动端兜底：离线时才走 blob，在线一律网络地址，
@@ -105,12 +128,15 @@
           if (settled) return;
           settled = true;
           clearTimeout(timer);
+          mediaBusy = false;             // 传输结束，放行预热队列
           if (curBlob) { try { URL.revokeObjectURL(curBlob); } catch (e) {} }
           if (curAudio === m) curAudio = null;
           resolve(ok);
         }
         curAudio = m;
         m.__lang = lang;                 // 音量实时调节按语言取补偿
+        // 网络地址播放=传输中，让行预热队列；blob 本地播放不占带宽
+        mediaBusy = (startUrl.indexOf('blob:') !== 0);
         m.onended = function () { finish(true); };
         m.onerror = function () {
           // 网络/在线地址失败且还没试过缓存 → 切 blob 再试一次（弱网兜底）
@@ -343,6 +369,7 @@
   /* ================= 对外接口 ================= */
   function stopAll() {
     playGen++;
+    mediaBusy = false;   // 停止后放行预热队列
     if (curAudio) { try { curAudio.pause(); curAudio.currentTime = 0; } catch (e) {} curAudio = null; }
     stopTTS();
   }

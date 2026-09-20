@@ -94,9 +94,12 @@
     el.progress.textContent = '本组 ' + (iIdx + 1) + '/' + sc.items.length;
     el.sceneLabel.textContent = sc.name;
     AudioEngine.setMediaInfo(it.w, '磨耳朵 · ' + sc.name);
-    // 打开页面/切词即静默预热当前条音频（后台写缓存，不打扰界面），点播放秒响
-    AudioEngine.preload('en', it.w);
-    AudioEngine.preload('zh', it.zh);
+    // 仅在未播放时预热当前条（页面初载保证点播放秒响）；
+    // 播放中不预热当前条——它马上由播放器自己拉，预热只管下一条，避免抢带宽
+    if (!playing) {
+      AudioEngine.preload('en', it.w);
+      AudioEngine.preload('zh', it.zh);
+    }
   }
   function showSentence() {
     var item = sQueue[sPos];
@@ -108,8 +111,7 @@
     el.zh.textContent = item.zh || '';
     el.progress.textContent = (sPos + 1) + ' / ' + sQueue.length;
     AudioEngine.setMediaInfo(item.en, '话术 · ' + (sc ? sc.name : '我的句子'));
-    AudioEngine.preload('en', item.en);
-    AudioEngine.preload('zh', item.zh || '');
+    if (!playing) AudioEngine.preload('en', item.en);
   }
   function show() { mode === 'words' ? showWord() : showSentence(); }
 
