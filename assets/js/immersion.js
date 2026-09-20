@@ -292,6 +292,35 @@
     App.notify('下一场景：' + scenes()[sIdx].name, 1800);
   }
 
+  /* ---------- 场景直达面板（点场景名打开，列表点击跳转） ---------- */
+  function openScenePanel() {
+    var panel = document.getElementById('scene-panel');
+    if (!panel) return;
+    var list = panel.querySelector('.sp-list');
+    list.innerHTML = '';
+    scenes().forEach(function (sc, i) {
+      var b = document.createElement('button');
+      b.className = 'sp-item' + (i === sIdx ? ' current' : '');
+      b.innerHTML = '<i>' + (i + 1) + '</i>' + sc.name +
+        '<span>' + sc.items.length + '条</span>';
+      b.addEventListener('click', function () {
+        panel.classList.add('hidden');
+        hardStop();
+        sIdx = i; iIdx = 0;
+        savePos();
+        show();
+        playing = true; var token = ++loopToken; loop(token);
+        renderPlayBtn();
+      });
+      list.appendChild(b);
+    });
+    panel.classList.remove('hidden');
+  }
+  function closeScenePanel() {
+    var panel = document.getElementById('scene-panel');
+    if (panel) panel.classList.add('hidden');
+  }
+
   function switchMode(next) {
     if (next === mode) return;
     hardStop();
@@ -352,6 +381,16 @@
     el.replay.addEventListener('click', replay);
     el.restartBtn.addEventListener('click', restart);
     el.nextGroup.addEventListener('click', nextGroup);
+    // 点场景名打开直达面板
+    el.sceneLabel.addEventListener('click', openScenePanel);
+    var panel = document.getElementById('scene-panel');
+    if (panel) {
+      panel.addEventListener('click', function (e) {
+        if (e.target === panel) closeScenePanel();   // 点遮罩关闭
+      });
+      var spClose = panel.querySelector('.sp-close');
+      if (spClose) spClose.addEventListener('click', closeScenePanel);
+    }
 
     document.querySelectorAll('.mode-btn').forEach(function (b) {
       b.addEventListener('click', function () { switchMode(b.dataset.mode); });

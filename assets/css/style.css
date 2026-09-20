@@ -464,6 +464,50 @@ button{background:none;border:none;cursor:pointer}
 
 /* 后台播放询问面板（磨耳朵首次点播放时出现） */
 @keyframes packhint-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* 场景直达面板（点场景名打开） */
+.scene-name{cursor:pointer}
+.scene-panel{
+  position:fixed;inset:0;z-index:150;
+  display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.55);
+  animation:packhint-in .25s var(--ease);
+}
+.scene-panel.hidden{display:none!important}
+.sp-box{
+  width:100%;max-width:560px;max-height:76dvh;
+  display:flex;flex-direction:column;
+  background:rgba(24,24,29,.92);
+  border:1px solid rgba(255,255,255,.14);border-bottom:none;
+  border-radius:20px 20px 0 0;
+  padding:14px 14px calc(14px + env(safe-area-inset-bottom));
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  animation:sp-up .3s var(--ease);
+}
+@keyframes sp-up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sp-head{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:15px;font-weight:800;color:var(--ink);padding:2px 4px 12px;
+}
+.sp-close{
+  min-width:38px;min-height:38px;border-radius:999px;font-size:17px;
+  color:var(--dim);border:1px solid var(--line);
+}
+.sp-list{overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:6px}
+.sp-item{
+  display:flex;align-items:center;gap:10px;text-align:left;
+  min-height:48px;padding:10px 14px;border-radius:12px;
+  background:var(--panel2);border:1px solid var(--line);
+  font-size:14.5px;color:var(--ink);transition:.15s var(--ease);
+}
+.sp-item i{
+  font-style:normal;flex:0 0 auto;width:26px;text-align:center;
+  font-size:12px;color:var(--faint);
+}
+.sp-item span{margin-left:auto;font-size:12px;color:var(--faint)}
+.sp-item.current{border-color:var(--accent);color:var(--accent)}
+.sp-item:active{transform:scale(.98);border-color:var(--accent)}
+
 .bg-ask{
   margin-top:14px;padding:18px 18px 16px;border-radius:var(--radius);
   background:rgba(27,27,33,.82);border:1px solid rgba(255,194,71,.35);
