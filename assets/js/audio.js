@@ -10,8 +10,7 @@
 (function () {
   var manifest = window.AUDIO_MANIFEST || { en: {}, zh: {} };
   var playGen = 0;
-  var curAudio = null;     // 当前本地音频对象
-  var curBlobUrl = null;   // 当前 blob URL（播放完释放）
+  var curAudio = null;     // 当前播放的单例媒体元素
   var preloads = [];       // 预热去重表（最多 8 条）
 
   var synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
@@ -66,50 +65,79 @@
     }).catch(function () { return false; });
   }
 
+  /* 缓存 Response → blob URL（移动端兜底：离线时才走 blob，在线一律网络地址，
+     规避部分手机浏览器对 blob 媒体源要求逐次手势/静默失败的兼容问题） */
+  function blobUrlOf(src) {
+    if (!cacheP) return Promise.resolve(null);
+    return cacheP.then(function (c) {
+      return c.match(src).then(function (hit) {
+        if (!hit) return null;
+        return hit.blob().then(function (b) {
+          try { return URL.createObjectURL(b); } catch (e) { return null; }
+        }).catch(function () { return null; });
+      });
+    }).catch(function () { return null; });
+  }
+
+  /* ===== 单例媒体元素 =====
+     移动端多次 new Audio() 并发播放易静默失败（自动联播无声的主因），
+     改为单个 <audio> 反复换 src 播放（移动端最佳实践） */
+  var media = null;
+  function getMedia() {
+    if (!media) { media = new Audio(); media.preload = 'auto'; }
+    return media;
+  }
+
   function playLocal(lang, text, rate) {
     var src = localPath(lang, text);
     if (!src) return Promise.resolve(false);
     var myGen = playGen;
-    // 有缓存读缓存（blob 秒开且支持离线），没有直接播网络地址
-    // 注意：Response.blob() 返回 Promise，必须先取 Blob 再生成 URL
-    var srcP = cacheP
-      ? cacheP.then(function (c) {
-          return c.match(src).then(function (hit) {
-            if (!hit) return src;
-            return hit.blob().then(function (b) {
-              try { return URL.createObjectURL(b); } catch (e) { return src; }
-            }).catch(function () { return src; });
-          });
-        }).catch(function () { return src; })
-      : Promise.resolve(src);
-    return srcP.then(function (resolved) {
-      if (myGen !== playGen) {
-        if (resolved.indexOf('blob:') === 0) try { URL.revokeObjectURL(resolved); } catch (e) {}
-        return false;
-      }
+    var online = navigator.onLine !== false;
+    // 在线：直接网络地址（preload 已预热 HTTP 缓存，秒开）；离线：缓存 blob
+    var startP = online ? Promise.resolve(src) : blobUrlOf(src);
+    return startP.then(function (resolved) {
+      var startUrl = resolved || src;
+      if (myGen !== playGen) return false;
       return new Promise(function (resolve) {
-        var a = new Audio(resolved);
-        a.preload = 'auto';
-        a.volume = playVolume(lang);   // 语言级补偿 × 用户音量
-        a.playbackRate = Math.max(0.5, Math.min(2, rate || 1));
-        curAudio = a;
-        a.__lang = lang;   // 音量实时调节时按语言取补偿系数
-        curBlobUrl = resolved.indexOf('blob:') === 0 ? resolved : null;
-        var done = false, timer = null;
+        var m = getMedia();
+        var settled = false, timer = null, curBlob = null;
         function finish(ok) {
-          if (done) return;
-          done = true;
+          if (settled) return;
+          settled = true;
           clearTimeout(timer);
-          if (curAudio === a) curAudio = null;
-          if (curBlobUrl) { try { URL.revokeObjectURL(curBlobUrl); } catch (e) {} curBlobUrl = null; }
+          if (curBlob) { try { URL.revokeObjectURL(curBlob); } catch (e) {} }
+          if (curAudio === m) curAudio = null;
           resolve(ok);
         }
-        a.onended = function () { finish(true); };
-        a.onerror = function () { finish(false); };
+        curAudio = m;
+        m.__lang = lang;                 // 音量实时调节按语言取补偿
+        m.onended = function () { finish(true); };
+        m.onerror = function () {
+          // 网络/在线地址失败且还没试过缓存 → 切 blob 再试一次（弱网兜底）
+          if (curBlob === null && startUrl === src && cacheP) {
+            blobUrlOf(src).then(function (u) {
+              if (settled) return;
+              if (u && myGen === playGen) {
+                curBlob = u;
+                m.src = u;
+                m.play().catch(function () { finish(false); });
+                return;
+              }
+              finish(false);
+            });
+            return;
+          }
+          finish(false);
+        };
         timer = setTimeout(function () { finish(false); }, 40000);
-        // 用户点过播放，媒体自动播放策略已放开；仍 catch 拒绝
-        a.play().then(function () {
-          if (myGen !== playGen) { try { a.pause(); } catch (e) {} finish(true); }
+        if (startUrl.indexOf('blob:') === 0) curBlob = startUrl;
+        m.pause();
+        m.src = startUrl;
+        m.volume = playVolume(lang);     // 语言级补偿 × 用户音量
+        m.playbackRate = Math.max(0.5, Math.min(2, rate || 1));
+        // 用户点过播放，自动播放策略已放开；仍 catch 拒绝
+        m.play().then(function () {
+          if (myGen !== playGen) { try { m.pause(); } catch (e) {} finish(true); }
         }).catch(function () { finish(false); });
       });
     });
@@ -355,6 +383,17 @@
       if (curAudio) { try { curAudio.volume = playVolume(curAudio.__lang || 'en'); } catch (e) {} }
     },
     getVolume: function () { return userVolume; },
+    /** MediaSession：锁屏/后台显示当前词条，提升后台连续播放存活率 */
+    setMediaInfo: function (title, artist) {
+      try {
+        if (!('mediaSession' in navigator)) return;
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: title || '邪修英语',
+          artist: artist || '',
+          album: 'XIEXIU EN'
+        });
+      } catch (e) {}
+    },
     /** Cache Storage 是否可用（分包缓存降级判断） */
     cacheReady: function () { return !!cacheP; },
     /** 能力检测：本地清单覆盖数 / TTS 情况（供诊断） */

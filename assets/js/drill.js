@@ -135,11 +135,9 @@
       card.innerHTML =
         '<div class="dr-word-main">' + w.w + '</div>' +
         '<div class="dr-word-ipa">' + (w.ipa || '') + '</div>' +
-        '<div class="dr-word-zh">' + (w.zh || '') + '</div>' +
-        '<button class="dr-word-sound" aria-label="朗读">🔊</button>';
-      card.querySelector('.dr-word-sound').addEventListener('click', function () {
-        speakOne(w.w);
-      });
+        '<div class="dr-word-zh">' + (w.zh || '') + '</div>';
+      // 直接点击单词卡即点读（移动端不用找小喇叭）
+      card.addEventListener('click', function () { speakOne(w.w); });
       el.words.appendChild(card);
     });
 
@@ -147,7 +145,7 @@
     var isTodayStage = (stageId === TODAY_STAGE);
     var last = groupIdx >= st.groups.length - 1;
     if (isTodayStage && !viewing && last) {
-      el.nextBtn.textContent = '今日最后一组，读完打卡 🎉';
+      el.nextBtn.textContent = '今日最后一组，读完收工 🎉';
     } else if (last) {
       el.nextBtn.textContent = '已是本阶段最后一组 ↑';
     } else {

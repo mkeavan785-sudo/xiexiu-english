@@ -65,9 +65,9 @@
           row.innerHTML =
             '<span class="rw-star">' + (ind ? '⭐' : '') + '</span>' +
             '<span class="rw-main">' + escapeHtml(w) + '</span>' +
-            '<span class="rw-zh">' + escapeHtml(zh) + '</span>' +
-            '<button class="rw-sound" aria-label="朗读">🔊</button>';
-          row.querySelector('.rw-sound').addEventListener('click', function () {
+            '<span class="rw-zh">' + escapeHtml(zh) + '</span>';
+          // 直接点击整行即点读（不用找小喇叭）
+          row.addEventListener('click', function () {
             AudioEngine.speakEn(w, Store.settings().rate).then(function (ok) {
               if (!ok) App.notify('发音不可用，请检查系统语音或网络。');
             });

@@ -35,7 +35,8 @@
         setTimeout(function () { boot.remove(); }, 550);
         if (completed) {
           ids.forEach(function (id) { AudioPacks.markDone(id); });
-          if (window.My && My.refreshPacks) My.refreshPacks();
+          // 刷新磨耳朵场景栏的就地提示（初始渲染时标记还没写入）
+          if (window.Immersion && Immersion.refreshHint) Immersion.refreshHint();
         }
       }, wait);
     }

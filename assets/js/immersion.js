@@ -93,9 +93,11 @@
     el.zh.textContent = it.zh;
     el.progress.textContent = '本组 ' + (iIdx + 1) + '/' + sc.items.length;
     el.sceneLabel.textContent = sc.name;
+    AudioEngine.setMediaInfo(it.w, '磨耳朵 · ' + sc.name);
     // 打开页面/切词即预热当前条音频，点播放不用等网络
     AudioEngine.preload('en', it.w);
     AudioEngine.preload('zh', it.zh);
+    hintPack('w' + sIdx);
   }
   function showSentence() {
     var item = sQueue[sPos];
@@ -106,10 +108,51 @@
     el.ipa.textContent = item.sc && sc ? '【' + sc.name + '】' : '【我的句子】';
     el.zh.textContent = item.zh || '';
     el.progress.textContent = (sPos + 1) + ' / ' + sQueue.length;
+    AudioEngine.setMediaInfo(item.en, '话术 · ' + (sc ? sc.name : '我的句子'));
     AudioEngine.preload('en', item.en);
     AudioEngine.preload('zh', item.zh || '');
+    // 句子按所属场景提示缓存；我的句子无预置音频不提示
+    var pk = sc ? SENTENCES.scenes.indexOf(sc) : -1;
+    hintPack(pk >= 0 ? 's' + pk : null);
   }
   function show() { mode === 'words' ? showWord() : showSentence(); }
+
+  /* ---------- 场景包就地提示（进入未缓存组时出现，可缓存/可忽略） ---------- */
+  var dismissedPacks = {};   // 本次会话手动忽略的包
+  var hintLoading = false;
+  function hintPack(packId) {
+    var box = el.packHint;
+    if (!box || !window.AudioPacks || !packId) { if (box) box.classList.add('hidden'); return; }
+    var pack = AudioPacks.get(packId);
+    if (!pack || AudioPacks.status(pack) !== 'none' || dismissedPacks[packId]) {
+      box.classList.add('hidden');
+      return;
+    }
+    box.classList.remove('hidden');
+    box.classList.remove('loading');
+    box.innerHTML =
+      '<span class="ph-txt">📦「' + pack.name + '」未缓存，联网可直接播</span>' +
+      '<button class="ph-btn" id="ph-cache">缓存本组 ' + pack.items.length + ' 条</button>' +
+      '<button class="ph-x" id="ph-dismiss" aria-label="忽略">×</button>';
+    var btn = box.querySelector('#ph-cache');
+    btn.addEventListener('click', function () {
+      if (hintLoading) return;
+      hintLoading = true;
+      box.classList.add('loading');
+      AudioEngine.preloadPack(AudioPacks.urls(pack), function (d, t) {
+        btn.textContent = '缓存中 ' + Math.round(d / t * 100) + '%';
+      }).then(function (r) {
+        hintLoading = false;
+        if (r.ok) { AudioPacks.markDone(pack.id); App.notify('「' + pack.name + '」已缓存，可离线播放', 2200); }
+        else App.notify('部分音频缓存失败，请检查网络');
+        hintPack(pack.id);
+      }).catch(function () { hintLoading = false; hintPack(pack.id); });
+    });
+    box.querySelector('#ph-dismiss').addEventListener('click', function () {
+      dismissedPacks[packId] = true;
+      box.classList.add('hidden');
+    });
+  }
 
   /* ---------- 播放主循环 ---------- */
   function loop(token) {
@@ -198,11 +241,45 @@
       App.notify('发音不可用：本机没有语音引擎且当前离线。');
       return;
     }
+    // 开启自动联播前，首次询问是否后台播放（每会话最多一次，已开常亮不打扰）
+    if (!Store.settings().wakeLock && !sessionStorage.getItem('xx_bg_asked')) {
+      var panel = document.getElementById('bg-ask');
+      if (panel && !panel.classList.contains('hidden')) return;
+      if (panel) {
+        panel.classList.remove('hidden');
+        return;   // 等用户选择后再真正开始
+      }
+    }
+    beginPlay();
+  }
+
+  /** 后台播放询问面板的落点：真正开始循环 */
+  function beginPlay() {
+    if (playing) return;
     playing = true;
     var token = ++loopToken;
     AudioEngine.wake.setWant(!!Store.settings().wakeLock);
     renderPlayBtn();
     loop(token);
+  }
+
+  /** 后台播放询问面板（index.html 静态节点，此处绑定） */
+  function initBgAsk() {
+    var panel = document.getElementById('bg-ask');
+    if (!panel) return;
+    panel.querySelector('#bg-ask-yes').addEventListener('click', function () {
+      sessionStorage.setItem('xx_bg_asked', '1');
+      Store.settings({ wakeLock: true });
+      var cb = document.getElementById('opt-wake');
+      if (cb) cb.checked = true;
+      panel.classList.add('hidden');
+      beginPlay();
+    });
+    panel.querySelector('#bg-ask-no').addEventListener('click', function () {
+      sessionStorage.setItem('xx_bg_asked', '1');
+      panel.classList.add('hidden');
+      beginPlay();
+    });
   }
 
   function pause() {
@@ -296,7 +373,8 @@
       gap: document.getElementById('opt-gap'),
       wake: document.getElementById('opt-wake'),
       wrapRepeat: document.getElementById('wrap-enrepeat'),
-      enrepeat: document.getElementById('opt-enrepeat')
+      enrepeat: document.getElementById('opt-enrepeat'),
+      packHint: document.getElementById('pack-hint')
     };
 
     var s = Store.settings();
@@ -305,6 +383,7 @@
     el.wake.checked = !!s.wakeLock;
     el.enrepeat.value = String(s.enRepeat || 2);
 
+    initBgAsk();
     loadPos();
     show();
     renderPlayBtn();
@@ -348,6 +427,15 @@
 
   window.Immersion = {
     init: init, pause: pause, isPlaying: function () { return playing; },
-    refreshPool: refreshPool
+    refreshPool: refreshPool,
+    /** boot 首包标记完成后刷新就地提示（避免初始渲染时状态滞后） */
+    refreshHint: function () {
+      if (mode === 'words') hintPack('w' + sIdx);
+      else if (sQueue[sPos] && sQueue[sPos].sc) {
+        var idx = -1;
+        SENTENCES.scenes.forEach(function (s, i) { if (s.key === sQueue[sPos].sc) idx = i; });
+        hintPack(idx >= 0 ? 's' + idx : null);
+      } else hintPack(null);
+    }
   };
 })();

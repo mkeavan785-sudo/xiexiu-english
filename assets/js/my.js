@@ -86,9 +86,10 @@
         '<span class="rw-star"></span>' +
         '<span class="rw-main my-main">' + escapeHtml(item.en) + '</span>' +
         '<span class="rw-zh">' + escapeHtml(item.zh || '') + '</span>' +
-        '<button class="rw-sound" aria-label="朗读">🔊</button>' +
         '<button class="rw-del" aria-label="删除">✕</button>';
-      row.querySelector('.rw-sound').addEventListener('click', function () {
+      // 点击整行即点读（删除按钮单独拦截）
+      row.addEventListener('click', function (e) {
+        if (e.target.closest('.rw-del')) return;
         AudioEngine.speakEn(item.en, Store.settings().rate).then(function (ok) {
           if (!ok) App.notify('发音不可用，请检查系统语音或网络。');
         });
@@ -108,72 +109,7 @@
     el.stMysents.textContent = s.mySentences.length;
   }
 
-  /* ---------- 音频补充包 ---------- */
-  var loadingPack = null;   // 防止同包并发加载
-
-  function packStatusText(st) {
-    return st === 'cached' ? '已缓存 · 可离线'
-         : st === 'outdated' ? '词库有更新，建议重载' : '未加载';
-  }
-
-  function renderPacks() {
-    var box = el.packsList;
-    if (!box) return;
-    box.innerHTML = '';
-    var packs = AudioPacks.all();
-    var cachedN = packs.filter(function (p) { return AudioPacks.status(p) === 'cached'; }).length;
-    if (el.packsNote) el.packsNote.textContent = '已缓存 ' + cachedN + '/' + packs.length + ' 包';
-
-    packs.forEach(function (pack) {
-      var st = AudioPacks.status(pack);
-      var row = document.createElement('div');
-      row.className = 'pack-row st-' + st;
-      row.innerHTML =
-        '<div class="pack-info">' +
-          '<b>' + escapeHtml(pack.name) + '</b>' +
-          '<span>' + pack.items.length + ' 条 · ' + packStatusText(st) + '</span>' +
-        '</div>' +
-        '<div class="pack-bar"><i></i></div>' +
-        '<button class="pack-btn">' +
-          (st === 'cached' ? '✓ 已载' : (st === 'outdated' ? '↻ 更新' : '↓ 加载')) +
-        '</button>';
-
-      var btn = row.querySelector('.pack-btn');
-      var bar = row.querySelector('.pack-bar i');
-      if (st === 'cached') {
-        btn.disabled = true;
-      } else {
-        btn.addEventListener('click', function () {
-          if (loadingPack) { App.notify('有包正在加载，请稍候'); return; }
-          loadingPack = pack.id;
-          btn.disabled = true;
-          row.classList.add('loading');
-          AudioEngine.preloadPack(AudioPacks.urls(pack), function (d, t) {
-            bar.style.width = Math.round(d / t * 100) + '%';
-            btn.textContent = Math.round(d / t * 100) + '%';
-          }).then(function (r) {
-            loadingPack = null;
-            if (r.ok) {
-              AudioPacks.markDone(pack.id);
-              renderPacks();
-              App.notify('「' + pack.name + '」已缓存，可离线播放', 2400);
-            } else {
-              btn.disabled = false;
-              btn.textContent = st === 'outdated' ? '↻ 更新' : '↓ 加载';
-              App.notify('部分音频加载失败，请检查网络后重试');
-            }
-          }).catch(function () {
-            loadingPack = null;
-            btn.disabled = false;
-            btn.textContent = st === 'outdated' ? '↻ 更新' : '↓ 加载';
-            App.notify('加载失败，请检查网络后重试');
-          });
-        });
-      }
-      box.appendChild(row);
-    });
-  }
-  function refreshPacks() { renderPacks(); }
+  /* ---------- 音频补充包已迁至磨耳朵场景栏就地提示（immersion.js hintPack） ---------- */
 
   function refreshAll() { renderStats(); renderList(); }
 
@@ -234,8 +170,6 @@
       list: document.getElementById('my-list'),
       empty: document.getElementById('my-empty'),
       tabSentsN: document.getElementById('tab-sents-n'),
-      packsList: document.getElementById('packs-list'),
-      packsNote: document.getElementById('packs-note'),
       setLetters: document.getElementById('set-letters')
     };
 
@@ -256,10 +190,9 @@
     });
 
     refreshAll();
-    renderPacks();
   }
 
-  function onShow() { refreshAll(); renderPacks(); }
+  function onShow() { refreshAll(); }
 
-  window.My = { init: init, onShow: onShow, refreshPacks: refreshPacks };
+  window.My = { init: init, onShow: onShow };
 })();

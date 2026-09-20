@@ -98,9 +98,18 @@ button{background:none;border:none;cursor:pointer}
   border-radius:var(--radius);padding:26px 20px 20px;
   display:flex;flex-direction:column;align-items:center;
 }
-.player-stage{text-align:center;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:10px;width:100%}
+.player-stage{
+  position:relative;   /* 场景标签定位到卡片角落 */
+  text-align:center;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:10px;width:100%;
+}
 .word-en{font-size:40px;font-weight:800;letter-spacing:.5px;word-break:break-word;line-height:1.15}
-.word-ipa{font-size:17px;color:var(--accent);font-family:Georgia,'Times New Roman',serif}
+/* 场景介绍：挪到卡片右上角小胶囊，不再紧贴英语下方（避免与中文释义混淆） */
+.word-ipa{
+  position:absolute;top:-6px;right:0;
+  font-size:10.5px;color:var(--faint);font-family:var(--font);letter-spacing:.5px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);
+  border-radius:999px;padding:4px 10px;line-height:1.2;white-space:nowrap;
+}
 .word-zh{font-size:19px;color:var(--dim)}
 
 .player-meta{
@@ -213,9 +222,6 @@ button{background:none;border:none;cursor:pointer}
 .player-stage.is-sentence .word-en{
   font-size:24px;line-height:1.5;font-weight:700;letter-spacing:0;
 }
-.player-stage.is-sentence .word-ipa{
-  font-size:12px;color:var(--faint);font-family:var(--font);letter-spacing:1px;
-}
 .player-stage.is-sentence .word-zh{font-size:17px;color:var(--dim)}
 
 /* ---------- 全局音量按钮（topbar 右上角） ---------- */
@@ -274,18 +280,14 @@ button{background:none;border:none;cursor:pointer}
 .dr-tip{font-size:13px;color:var(--dim);line-height:1.6;margin:10px 0 16px}
 .dr-words{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
 .dr-word{
-  position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;
   background:var(--panel2);border:1px solid var(--line);border-radius:12px;
-  padding:11px 52px 11px 14px;
+  padding:11px 14px;transition:.15s var(--ease);
 }
+.dr-word:active{transform:scale(.985);border-color:var(--accent)}
 .dr-word-main{font-size:20px;font-weight:700;width:100%}
 .dr-word-ipa{font-size:13px;color:var(--accent);font-family:Georgia,serif}
 .dr-word-zh{font-size:13px;color:var(--dim);margin-left:auto}
-.dr-word-sound{
-  position:absolute;right:10px;top:50%;transform:translateY(-50%);
-  font-size:18px;padding:8px 10px;border-radius:10px;
-}
-.dr-word-sound:active{transform:translateY(-50%) scale(.88)}
 .dr-next-btn{
   width:100%;min-height:50px;margin-top:10px;border-radius:12px;
   background:var(--panel2);border:1px solid var(--line);
@@ -360,8 +362,9 @@ button{background:none;border:none;cursor:pointer}
 .rw-main{font-weight:700;font-size:16px;flex:0 0 auto;max-width:42%;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rw-zh{font-size:13px;color:var(--dim);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rw-sound{font-size:16px;padding:6px 8px;border-radius:8px;flex:0 0 auto}
-.rw-sound:active{transform:scale(.88)}
+/* 整行可点读：指针+按压反馈 */
+.root-word{cursor:pointer;transition:.15s var(--ease)}
+.root-word:active{transform:scale(.985);border-color:var(--accent)}
 .rw-feed{
   flex:0 0 auto;min-height:34px;padding:5px 12px;border-radius:999px;
   border:1px solid var(--line);color:var(--faint);font-size:12px;
@@ -459,39 +462,48 @@ button{background:none;border:none;cursor:pointer}
 }
 .rw-del:active{border-color:var(--danger);color:var(--danger)}
 
-/* 音频补充包 */
-.mine-packs{
-  margin-top:22px;background:var(--panel);border:1px solid var(--line);
-  border-radius:14px;padding:16px 16px 18px;
+/* 场景音频包就地提示（磨耳朵场景栏下方） */
+.pack-hint{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  margin:10px 0 0;padding:9px 12px;border-radius:12px;
+  background:rgba(255,194,71,.07);border:1px solid rgba(255,194,71,.25);
+  animation:packhint-in .3s var(--ease);
 }
-.mine-packs h3{font-size:15px;margin-bottom:12px}
-.packs-note{font-size:12px;color:var(--faint);font-weight:400;margin-left:6px}
-.packs-list{display:flex;flex-direction:column;gap:8px}
-.pack-row{
-  display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;
-  padding:10px 12px;border-radius:10px;background:var(--panel2);
-  border:1px solid var(--line);
-}
-.pack-row.st-cached{opacity:.72}
-.pack-info{display:flex;flex-direction:column;gap:2px;min-width:0}
-.pack-info b{font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pack-info span{font-size:12px;color:var(--faint)}
-.pack-row.st-cached .pack-info span{color:var(--ok)}
-.pack-btn{
-  grid-column:2;grid-row:1;flex:0 0 auto;min-width:64px;min-height:40px;
-  padding:6px 14px;border-radius:999px;font-size:13px;font-weight:700;
+@keyframes packhint-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pack-hint .ph-txt{font-size:12px;color:var(--dim);flex:1;min-width:0;line-height:1.5}
+.pack-hint .ph-btn{
+  flex:0 0 auto;min-height:38px;padding:6px 14px;border-radius:999px;
+  font-size:12.5px;font-weight:700;
   background:var(--accent);color:#1a1407;border:1px solid var(--accent);
   transition:.15s var(--ease);
 }
-.pack-btn:active{transform:scale(.95);background:var(--accent-press)}
-.pack-btn:disabled{background:transparent;color:var(--ok);border-color:var(--line)}
-.pack-row.loading .pack-btn{color:var(--accent)}
-.pack-bar{
-  grid-column:1 / -1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);
-  overflow:hidden;opacity:0;transition:opacity .2s;
+.pack-hint .ph-btn:active{transform:scale(.95);background:var(--accent-press)}
+.pack-hint .ph-x{
+  flex:0 0 auto;min-width:34px;min-height:34px;border-radius:999px;
+  font-size:15px;color:var(--faint);border:1px solid var(--line);
 }
-.pack-row.loading .pack-bar{opacity:1}
-.pack-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s var(--ease)}
+.pack-hint.hidden{display:none!important}
+
+/* 后台播放询问面板（磨耳朵首次点播放时出现） */
+.bg-ask{
+  margin-top:14px;padding:18px 18px 16px;border-radius:var(--radius);
+  background:rgba(27,27,33,.82);border:1px solid rgba(255,194,71,.35);
+  box-shadow:0 16px 44px rgba(0,0,0,.45);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  animation:packhint-in .3s var(--ease);
+}
+.bg-ask.hidden{display:none!important}
+.bg-ask-t{font-size:15.5px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.bg-ask-d{font-size:12.5px;color:var(--dim);line-height:1.7;margin-bottom:14px}
+.bg-ask-btns{display:flex;gap:10px}
+.bg-ask-btns button{
+  flex:1;min-height:46px;border-radius:12px;font-size:14px;font-weight:700;
+  transition:.15s var(--ease);
+}
+.bg-ask-btns .bg-yes{background:var(--accent);color:#1a1407;border:1px solid var(--accent)}
+.bg-ask-btns .bg-yes:active{transform:scale(.96);background:var(--accent-press)}
+.bg-ask-btns .bg-no{background:transparent;color:var(--dim);border:1px solid var(--line)}
+.bg-ask-btns .bg-no:active{transform:scale(.96);color:var(--ink)}
 
 /* 学习设置 */
 .mine-settings{
