@@ -462,29 +462,8 @@ button{background:none;border:none;cursor:pointer}
 }
 .rw-del:active{border-color:var(--danger);color:var(--danger)}
 
-/* 场景音频包就地提示（磨耳朵场景栏下方） */
-.pack-hint{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  margin:10px 0 0;padding:9px 12px;border-radius:12px;
-  background:rgba(255,194,71,.07);border:1px solid rgba(255,194,71,.25);
-  animation:packhint-in .3s var(--ease);
-}
-@keyframes packhint-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-.pack-hint .ph-txt{font-size:12px;color:var(--dim);flex:1;min-width:0;line-height:1.5}
-.pack-hint .ph-btn{
-  flex:0 0 auto;min-height:38px;padding:6px 14px;border-radius:999px;
-  font-size:12.5px;font-weight:700;
-  background:var(--accent);color:#1a1407;border:1px solid var(--accent);
-  transition:.15s var(--ease);
-}
-.pack-hint .ph-btn:active{transform:scale(.95);background:var(--accent-press)}
-.pack-hint .ph-x{
-  flex:0 0 auto;min-width:34px;min-height:34px;border-radius:999px;
-  font-size:15px;color:var(--faint);border:1px solid var(--line);
-}
-.pack-hint.hidden{display:none!important}
-
 /* 后台播放询问面板（磨耳朵首次点播放时出现） */
+@keyframes packhint-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .bg-ask{
   margin-top:14px;padding:18px 18px 16px;border-radius:var(--radius);
   background:rgba(27,27,33,.82);border:1px solid rgba(255,194,71,.35);

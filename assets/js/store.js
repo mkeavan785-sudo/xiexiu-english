@@ -12,7 +12,7 @@
       enRepeat: 2,       // 句模式英文连读次数
       wakeLock: true,    // 磨耳朵常亮
       lettersStage: false,// 熟读是否包含阶段0字母（M2）
-      volume: 1          // 全局发音音量 0~1（右上角音量按钮）
+      volume: 1,         // 全局发音音量 0~1（右上角音量按钮）
     },
     drill: {},           // {date, stageId, done/drawn/recent}
     immWords: {scene: 0, item: 0}, // 磨耳朵单词场景进度（跨会话记忆）
@@ -33,6 +33,8 @@
     }
     // 合并默认值（浅合并两层，新老版本字段兼容）
     state = merge(DEFAULTS, state);
+    // 清理已撤销的补充包按包记录（缓存改为全静默预热）
+    try { localStorage.removeItem('xx_packs_v1'); } catch (e) {}
   }
 
   function merge(base, over) {

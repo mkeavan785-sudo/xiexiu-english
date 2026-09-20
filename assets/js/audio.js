@@ -24,7 +24,7 @@
   var norm = function (s) { return String(s == null ? '' : s).trim().replace(/\s+/g, ' '); };
 
   /* 语言级音量补偿：实测 edge-tts 响度 en≈-20.0 LUFS / zh≈-19.1 LUFS，
-     中文偏响约 0.9 LU，播放中文时按 0.9（≈-0.9dB）拉平，避免中英音量忽大忽小 */
+     中文偏响约 0.9 LU，播放中文时按 0.9（≈-0.9dB）拉平 */
   var LANG_VOLUME = { en: 1.0, zh: 0.9 };
 
   /* 用户总音量（右上角音量按钮调节，0~1），拖动时正在播的也实时变 */
