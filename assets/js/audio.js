@@ -28,6 +28,12 @@
      中文偏响约 0.9 LU，播放中文时按 0.9（≈-0.9dB）拉平，避免中英音量忽大忽小 */
   var LANG_VOLUME = { en: 1.0, zh: 0.9 };
 
+  /* 用户总音量（右上角音量按钮调节，0~1），拖动时正在播的也实时变 */
+  var userVolume = (window.Store && typeof Store.settings().volume === 'number')
+    ? Store.settings().volume : 1;
+  function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+  function playVolume(lang) { return clamp01((LANG_VOLUME[lang] || 1) * userVolume); }
+
   /* ================= Cache Storage 分包缓存 ================= */
   var CACHE_NAME = 'xx-audio-v1';   // 词库文本更新时升版本号
   var cacheP = null;
@@ -65,11 +71,14 @@
     if (!src) return Promise.resolve(false);
     var myGen = playGen;
     // 有缓存读缓存（blob 秒开且支持离线），没有直接播网络地址
+    // 注意：Response.blob() 返回 Promise，必须先取 Blob 再生成 URL
     var srcP = cacheP
       ? cacheP.then(function (c) {
           return c.match(src).then(function (hit) {
             if (!hit) return src;
-            return URL.createObjectURL(hit.blob ? hit.blob() : hit);
+            return hit.blob().then(function (b) {
+              try { return URL.createObjectURL(b); } catch (e) { return src; }
+            }).catch(function () { return src; });
           });
         }).catch(function () { return src; })
       : Promise.resolve(src);
@@ -81,9 +90,10 @@
       return new Promise(function (resolve) {
         var a = new Audio(resolved);
         a.preload = 'auto';
-        a.volume = LANG_VOLUME[lang] || 1;   // 语言级音量补偿
+        a.volume = playVolume(lang);   // 语言级补偿 × 用户音量
         a.playbackRate = Math.max(0.5, Math.min(2, rate || 1));
         curAudio = a;
+        a.__lang = lang;   // 音量实时调节时按语言取补偿系数
         curBlobUrl = resolved.indexOf('blob:') === 0 ? resolved : null;
         var done = false, timer = null;
         function finish(ok) {
@@ -227,7 +237,7 @@
           if (!v) return resolve(false);
 
           var u = new SpeechSynthesisUtterance(text);
-          u.voice = v; u.lang = v.lang; u.rate = rate; u.volume = 1;
+          u.voice = v; u.lang = v.lang; u.rate = rate; u.volume = clamp01(userVolume);
           var done = false, timer = null;
           function finish(ok) {
             if (done) return;
@@ -278,6 +288,7 @@
                 encodeURIComponent(text) + '&type=0';
       var audio = new Audio();
       audio.preload = 'auto';
+      audio.volume = clamp01(userVolume);
       var done = false;
       var timer = setTimeout(function () { finish(false); }, 9000);
       function finish(ok) {
@@ -338,6 +349,12 @@
     preloadPack: preloadPack,
     urlOf: urlOf,
     stop: stopAll,
+    /** 用户总音量（右上角音量按钮），实时作用于正在播放的音频 */
+    setVolume: function (v) {
+      userVolume = clamp01(v);
+      if (curAudio) { try { curAudio.volume = playVolume(curAudio.__lang || 'en'); } catch (e) {} }
+    },
+    getVolume: function () { return userVolume; },
     /** Cache Storage 是否可用（分包缓存降级判断） */
     cacheReady: function () { return !!cacheP; },
     /** 能力检测：本地清单覆盖数 / TTS 情况（供诊断） */

@@ -103,17 +103,7 @@
     return stage(TODAY_STAGE).groups.every(function (g) { return isDone(g.id); });
   }
 
-  /* ---------- 渲染 ---------- */
-  function renderHead() {
-    el.day.textContent = TODAY_STAGE;
-    var st = stage(TODAY_STAGE);
-    el.stageName.textContent = '今日：阶段' + st.id + ' · ' + st.name;
-    var total = st.groups.length;
-    var doneN = doneList().length;
-    el.groupProgress.textContent = Math.min(doneN, total) + ' / ' + total + ' 组';
-    el.bar.style.width = Math.round(doneN / total * 100) + '%';
-  }
-
+  /* ---------- 渲染（熟读区只保留拼读内容：阶段 + 组卡片 + 完成态） ---------- */
   function renderChips() {
     el.chips.innerHTML = '';
     stages().filter(function (s) { return s.id !== 0; }).forEach(function (s) {
@@ -227,14 +217,12 @@
       var g = st.groups[groupIdx];
       if (!isDone(g.id)) doneList().push(g.id);
       if (todayComplete()) {
-        renderHead();
         renderChips();
         showDone();
         return;
       }
     }
     if (groupIdx < st.groups.length - 1) groupIdx++;
-    renderHead();
     renderGroup();
   }
 
@@ -252,10 +240,6 @@
   /* ---------- 初始化 ---------- */
   function init() {
     el = {
-      day: document.getElementById('dr-day'),
-      stageName: document.getElementById('dr-stage-name'),
-      bar: document.getElementById('dr-bar'),
-      groupProgress: document.getElementById('dr-group-progress'),
       chips: document.getElementById('dr-stage-chips'),
       card: document.getElementById('dr-card'),
       groupTitle: document.getElementById('dr-group-title'),
@@ -276,7 +260,6 @@
     Object.keys(d.drawn).forEach(function (k) { if (k !== TODAY) delete d.drawn[k]; });
     Object.keys(d.done).forEach(function (k) { if (k !== TODAY) delete d.done[k]; });
 
-    renderHead();
     renderChips();
     renderGroup();
 

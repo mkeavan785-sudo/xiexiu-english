@@ -330,7 +330,8 @@
 
     AudioEngine.whenReady().then(function () {
       var cap = AudioEngine.capabilities();
-      if (cap.tts && !cap.enVoice) {
+      // 本地 MP3 是主力（覆盖全部词库），仅当本地清单为空且无英文引擎时才提示
+      if (cap.tts && !cap.enVoice && !cap.localEn) {
         App.notify('本机无英文语音，英文将使用在线原声（需联网）；可在系统设置安装英语语音包离线使用。', 6000);
       }
     });

@@ -11,7 +11,8 @@
       gap: 1500,         // 中英之间停顿 ms
       enRepeat: 2,       // 句模式英文连读次数
       wakeLock: true,    // 磨耳朵常亮
-      lettersStage: false// 熟读是否包含阶段0字母（M2）
+      lettersStage: false,// 熟读是否包含阶段0字母（M2）
+      volume: 1          // 全局发音音量 0~1（右上角音量按钮）
     },
     drill: {},           // {date, stageId, done/drawn/recent}
     immWords: {scene: 0, item: 0}, // 磨耳朵单词场景进度（跨会话记忆）
