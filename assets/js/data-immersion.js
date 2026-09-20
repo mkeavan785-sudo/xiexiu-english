@@ -416,6 +416,174 @@ window.IMMERSION = {
         {w:'take care', zh:'保重'},
         {w:'have a good one', zh:'祝顺利'}
       ]
+    },
+    {
+      name: '行业·仓储系统',
+      items: [
+        {w:'warehouse', zh:'仓库'},
+        {w:'rack', zh:'货架'},
+        {w:'pallet', zh:'托盘'},
+        {w:'storage location', zh:'货位；储位'},
+        {w:'inventory', zh:'库存'},
+        {w:'inbound', zh:'入库'},
+        {w:'outbound', zh:'出库'},
+        {w:'sorting', zh:'分拣'},
+        {w:'loading', zh:'装载'},
+        {w:'unloading', zh:'卸货'},
+        {w:'automated warehouse', zh:'自动化仓储'},
+        {w:'AS/RS', zh:'立体库'},
+        {w:'pallet racking', zh:'重型货架'},
+        {w:'radio shuttle racking', zh:'穿梭式货架'},
+        {w:'double-deep pallet racking', zh:'双深式货架'},
+        {w:'VNA racking', zh:'窄巷式货架'}
+      ]
+    },
+    {
+      name: '行业·货架部件',
+      items: [
+        {w:'upright', zh:'立柱'},
+        {w:'upright frame', zh:'立柱片'},
+        {w:'beam', zh:'横梁'},
+        {w:'load beam', zh:'载重梁'},
+        {w:'cross beam', zh:'跨梁'},
+        {w:'rear beam', zh:'穿梭横梁'},
+        {w:'rear stop beam', zh:'背档梁'},
+        {w:'beam support', zh:'牛腿'},
+        {w:'steel planks', zh:'楼板'},
+        {w:'mezzanine', zh:'钢平台'},
+        {w:'drive-in racking', zh:'驶入式货架'},
+        {w:'push-back racking', zh:'后推式货架'},
+        {w:'intensive storage racking', zh:'密集存储货架'},
+        {w:'general racking', zh:'通用型货架'},
+        {w:'carrier and shuttle rack', zh:'子母穿梭立库'},
+        {w:'crane and shuttle rack', zh:'堆垛机穿梭式'}
+      ]
+    },
+    {
+      name: '行业·拉撑与网片',
+      items: [
+        {w:'horizontal brace', zh:'横撑'},
+        {w:'diagonal brace', zh:'斜撑'},
+        {w:'crosswise support', zh:'横斜撑'},
+        {w:'wire deck', zh:'层网'},
+        {w:'back mesh', zh:'背网'},
+        {w:'row spacer', zh:'连拉杆'},
+        {w:'rectangular row spacer', zh:'方管连拉杆'},
+        {w:'round row spacer', zh:'圆管连拉杆'},
+        {w:'horizontal row spacer', zh:'水平拉杆'},
+        {w:'rear row spacer', zh:'背拉杆'},
+        {w:'frame barrier', zh:'护栏'},
+        {w:'transverse', zh:'横向'},
+        {w:'longitudinal', zh:'纵向'},
+        {w:'horizontal load', zh:'水平荷载'},
+        {w:'displacement', zh:'位移'},
+        {w:'lateral displacement', zh:'侧移'}
+      ]
+    },
+    {
+      name: '行业·底脚与防护',
+      items: [
+        {w:'base plate', zh:'柱底脚'},
+        {w:'adjustable foot', zh:'可调底脚'},
+        {w:'column guard', zh:'护脚'},
+        {w:'stop plate', zh:'防撞座'},
+        {w:'protection pole', zh:'防撞杆'},
+        {w:'forklift limiter', zh:'叉车限位件'},
+        {w:'forklift passage', zh:'叉车通道'},
+        {w:'rail', zh:'导轨'},
+        {w:'ground rail', zh:'地导轨'},
+        {w:'rail with deceleration hole', zh:'减速孔导轨'},
+        {w:'counterweight', zh:'平衡重'},
+        {w:'max turning radius', zh:'最大旋转半径'},
+        {w:'clearance height', zh:'净空高度'},
+        {w:'storage height', zh:'储物高度'},
+        {w:'anchor bolt', zh:'地脚螺栓'},
+        {w:'shim', zh:'垫片调平'}
+      ]
+    },
+    {
+      name: '行业·螺栓五金',
+      items: [
+        {w:'bolt', zh:'螺栓'},
+        {w:'nut', zh:'螺母'},
+        {w:'washer', zh:'垫片'},
+        {w:'screw', zh:'螺丝；螺钉'},
+        {w:'self-tapping screw', zh:'自攻钉'},
+        {w:'hex bolt', zh:'六角螺栓'},
+        {w:'full thread', zh:'全螺纹'},
+        {w:'torque wrench', zh:'扭矩扳手'},
+        {w:'torque value', zh:'扭矩值'},
+        {w:'tighten to spec', zh:'按规范紧固'},
+        {w:'impact driver', zh:'电动起子'},
+        {w:'socket', zh:'套筒'},
+        {w:'level', zh:'水平仪'},
+        {w:'tape measure', zh:'卷尺'},
+        {w:'chalk line', zh:'墨线'},
+        {w:'plumb bob', zh:'线锤'}
+      ]
+    },
+    {
+      name: '行业·设备与叉车',
+      items: [
+        {w:'crane', zh:'堆垛机'},
+        {w:'shuttle car', zh:'穿梭台车'},
+        {w:'carrier', zh:'子母车'},
+        {w:'forklift', zh:'叉车'},
+        {w:'VNA forklift', zh:'VNA专用叉车'},
+        {w:'forward forklift', zh:'前移式叉车'},
+        {w:'pallet shuttle', zh:'托盘穿梭车'},
+        {w:'limit switch', zh:'限位开关'},
+        {w:'bumper', zh:'缓冲器'},
+        {w:'guide rail', zh:'导向轨'},
+        {w:'charging station', zh:'充电位'},
+        {w:'remote control', zh:'遥控器'},
+        {w:'pallet position', zh:'托盘位'},
+        {w:'first in first out', zh:'先进先出'},
+        {w:'lane', zh:'巷道；库道'},
+        {w:'bay', zh:'货格'}
+      ]
+    },
+    {
+      name: '行业·工艺处理',
+      items: [
+        {w:'welding', zh:'焊接'},
+        {w:'cutting', zh:'切割'},
+        {w:'drilling', zh:'钻孔'},
+        {w:'grinding', zh:'打磨'},
+        {w:'rolling', zh:'轧制'},
+        {w:'forming', zh:'成形'},
+        {w:'machining', zh:'加工'},
+        {w:'assembly', zh:'组装'},
+        {w:'galvanizing', zh:'镀锌'},
+        {w:'painting', zh:'喷涂；上漆'},
+        {w:'powder coating', zh:'粉末喷涂'},
+        {w:'heat treatment', zh:'热处理'},
+        {w:'polishing', zh:'抛光'},
+        {w:'packing', zh:'包装'},
+        {w:'batch distribution', zh:'分批运输'},
+        {w:'after-sale service', zh:'售后服务'}
+      ]
+    },
+    {
+      name: '行业·品质验收',
+      items: [
+        {w:'inspection', zh:'检查；检验'},
+        {w:'check and accept', zh:'验收'},
+        {w:'acceptance form', zh:'验收单'},
+        {w:'installation plan', zh:'安装方案'},
+        {w:'installation order', zh:'安装顺序'},
+        {w:'on-site photos', zh:'现场照片'},
+        {w:'on-site investigation', zh:'现场踏勘'},
+        {w:'installation process monitoring', zh:'安装过程监控'},
+        {w:'tolerance', zh:'公差'},
+        {w:'deformation', zh:'变形'},
+        {w:'crack', zh:'开裂'},
+        {w:'adhesion', zh:'附着力'},
+        {w:'wear resistance', zh:'耐磨性'},
+        {w:'tensile strength', zh:'抗拉强度'},
+        {w:'stability', zh:'稳定性'},
+        {w:'industrial standard', zh:'行业标准'}
+      ]
     }
   ]
 };
