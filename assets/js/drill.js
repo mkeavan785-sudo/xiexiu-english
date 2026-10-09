@@ -75,13 +75,18 @@
   function renderBlends() {
     var box = el.blList;
     box.innerHTML = '';
-    BLENDS.list.forEach(function (b, i) {
+    BLENDS.list.forEach(function (b) {
       var row = document.createElement('div');
       row.className = 'bl-row';
-      row.innerHTML =
-        '<span class="bl-letters">' + escapeHtml(b.c) + '</span>' +
-        '<span class="bl-word">' + escapeHtml(b.word) + '</span>' +
-        '<span class="bl-zh">' + escapeHtml(b.zh) + '</span>';
+      var inner =
+        '<div class="bl-main">' +
+          '<span class="bl-letters">' + escapeHtml(b.c) + '</span>' +
+          '<span class="bl-word">' + escapeHtml(b.word) + '</span>' +
+          '<span class="bl-zh">' + escapeHtml(b.zh) + '</span>' +
+        '</div>';
+      // 组合 ↔ 自然发音搭配（有独立音素的组合才显示）
+      if (b.sound) inner += '<div class="bl-sound">' + escapeHtml(b.sound) + '</div>';
+      row.innerHTML = inner;
       row.addEventListener('click', function () { speak(b.say); });
       box.appendChild(row);
     });
