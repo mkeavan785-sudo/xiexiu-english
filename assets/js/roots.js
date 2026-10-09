@@ -1,15 +1,20 @@
 /* ============================================================
    邪修英语 · 词根库 roots.js
    手风琴展开：词根头 → 词族；每词三级展示：
-   单词 + 中文 + 喇叭；下方构词拆解 chips（in- 进入 + stall 放置 + -ation）
-   v2：喂养磨耳朵链路已下线（磨耳朵词库独立）
+   单词 + 中文 + 点行朗读；下方构词拆解 chips
+   v3：页头双模式切换（词根 / 概念切片）
+     · 词根模式：ROOTS 手风琴（原有）
+     · 切片模式：SLICES 手风琴——中文大粒度词按
+       "状态/语境"拆成英语词，每片带状态标签+例句
    ============================================================ */
 (function () {
   var el = {};
   var kw = '';
-  var expanded = {};
+  var expanded = {};      // 词根展开状态（键=root）
+  var expandedSlice = {}; // 切片展开状态（键=c）
+  var mode = 'roots';     // roots / slices
 
-  /* ---------- 搜索 ---------- */
+  /* ---------- 搜索匹配 ---------- */
   function matchRoot(root) {
     if (!kw) return true;
     var k = kw.toLowerCase();
@@ -22,8 +27,27 @@
     }
     return false;
   }
+  function matchSlice(s) {
+    if (!kw) return true;
+    var k = kw.toLowerCase();
+    if (s.c.indexOf(kw) >= 0) return true;
+    if (s.title.toLowerCase().indexOf(k) >= 0) return true;
+    for (var i = 0; i < s.items.length; i++) {
+      if (s.items[i].w.toLowerCase().indexOf(k) >= 0) return true;
+      if (s.items[i].zh.indexOf(kw) >= 0) return true;
+      if (s.items[i].ctx.indexOf(kw) >= 0) return true;
+    }
+    return false;
+  }
 
-  function render() {
+  function speak(text) {
+    AudioEngine.speakEn(text, Store.settings().rate).then(function (ok) {
+      if (!ok) App.notify('发音不可用，请检查系统语音或网络。');
+    });
+  }
+
+  /* ---------- 渲染 · 词根模式 ---------- */
+  function renderRoots() {
     el.list.innerHTML = '';
     var shown = 0;
     var totalWords = ROOTS.list.reduce(function (n, r) { return n + r.w.length; }, 0);
@@ -34,7 +58,6 @@
       var item = document.createElement('div');
       item.className = 'root-item';
 
-      /* 头部 */
       var head = document.createElement('button');
       head.className = 'root-head';
       var indN = root.w.filter(function (it) { return it[3]; }).length;
@@ -50,7 +73,6 @@
       });
       item.appendChild(head);
 
-      /* 展开体 */
       if (expanded[root.r] || kw) {
         var body = document.createElement('div');
         body.className = 'root-body';
@@ -66,15 +88,9 @@
             '<span class="rw-star">' + (ind ? '⭐' : '') + '</span>' +
             '<span class="rw-main">' + escapeHtml(w) + '</span>' +
             '<span class="rw-zh">' + escapeHtml(zh) + '</span>';
-          // 直接点击整行即点读（不用找小喇叭）
-          row.addEventListener('click', function () {
-            AudioEngine.speakEn(w, Store.settings().rate).then(function (ok) {
-              if (!ok) App.notify('发音不可用，请检查系统语音或网络。');
-            });
-          });
+          row.addEventListener('click', function () { speak(w); });
           wrap.appendChild(row);
 
-          /* 构词拆解：installation = in-（进入） + stall（放置） + -ation（名词后缀） */
           if (partsStr) {
             var parts = ROOTS.parseParts(partsStr);
             var pBox = document.createElement('div');
@@ -105,6 +121,78 @@
     el.count.textContent = '（' + ROOTS.list.length + ' 词根 · ' + totalWords + ' 词）';
   }
 
+  /* ---------- 渲染 · 概念切片模式 ---------- */
+  function renderSlices() {
+    el.list.innerHTML = '';
+    var shown = 0;
+    var totalPieces = SLICES.list.reduce(function (n, s) { return n + s.items.length; }, 0);
+
+    SLICES.list.forEach(function (s) {
+      if (!matchSlice(s)) return;
+      shown++;
+      var item = document.createElement('div');
+      item.className = 'root-item';
+
+      var head = document.createElement('button');
+      head.className = 'root-head slice-head';
+      head.innerHTML =
+        '<span class="root-arrow">' + (expandedSlice[s.c] || kw ? '▾' : '▸') + '</span>' +
+        '<span class="slice-c">' + escapeHtml(s.c) + '</span>' +
+        '<span class="root-mean">' + escapeHtml(s.title.replace(s.c + ' · ', '')) + '</span>' +
+        '<span class="root-meta">' + s.items.length + '片</span>';
+      head.addEventListener('click', function () {
+        expandedSlice[s.c] = !expandedSlice[s.c];
+        render();
+      });
+      item.appendChild(head);
+
+      if (expandedSlice[s.c] || kw) {
+        var body = document.createElement('div');
+        body.className = 'root-body';
+
+        var note = document.createElement('div');
+        note.className = 'slice-note';
+        note.textContent = s.note;
+        body.appendChild(note);
+
+        s.items.forEach(function (it) {
+          var row = document.createElement('div');
+          row.className = 'root-word';
+          row.innerHTML =
+            '<span class="rw-main">' + escapeHtml(it.w) + '</span>' +
+            '<span class="rw-zh">' + escapeHtml(it.zh) + '</span>';
+          row.addEventListener('click', function () { speak(it.w); });
+          body.appendChild(row);
+
+          var ctx = document.createElement('div');
+          ctx.className = 'slice-ctx';
+          ctx.textContent = it.ctx;
+          body.appendChild(ctx);
+        });
+        item.appendChild(body);
+      }
+      el.list.appendChild(item);
+    });
+
+    el.empty.classList.toggle('hidden', shown > 0);
+    el.count.textContent = '（' + SLICES.list.length + ' 概念 · ' + totalPieces + ' 片）';
+  }
+
+  function render() {
+    if (mode === 'slices') renderSlices();
+    else renderRoots();
+  }
+
+  function setMode(next) {
+    if (mode === next) return;
+    mode = next;
+    document.querySelectorAll('.lib-tab').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.lib === mode);
+    });
+    expandedSlice = {};
+    render();
+  }
+
   function escapeHtml(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
@@ -119,13 +207,16 @@
       count: document.getElementById('roots-count')
     };
 
+    document.querySelectorAll('.lib-tab').forEach(function (b) {
+      b.addEventListener('click', function () { setMode(b.dataset.lib); });
+    });
+
     var t = null;
     el.search.addEventListener('input', function () {
       clearTimeout(t);
       var v = el.search.value.trim();
       t = setTimeout(function () {
         kw = v;
-        // 搜索时自动展开匹配项（render 内 kw 条件），清空恢复手动状态
         render();
       }, 180);
     });

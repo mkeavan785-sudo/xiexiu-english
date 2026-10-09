@@ -33,6 +33,7 @@ load('data-phonics.js');
 load('data-roots.js');
 load('data-sentences.js');
 load('data-immersion.js');
+load('data-slices.js');
 const W = global.window;
 
 /* ---- 抽取全部待发声文本 ---- */
@@ -59,6 +60,12 @@ W.PHONICS.stages.forEach(st => st.groups.forEach(g =>
 // 词根库：整词发音（拆解段仅展示不发声）
 W.ROOTS.list.forEach(r => (r.w || []).forEach(it => {
   if (it && it[0]) en.add(norm(it[0]));
+}));
+
+// 概念切片：英语词 + 中文状态标签（ctx 例句仅展示不发声）
+(W.SLICES ? W.SLICES.list : []).forEach(s => (s.items || []).forEach(it => {
+  if (it.w) en.add(norm(it.w));
+  if (it.zh) zh.add(norm(it.zh));
 }));
 
 /* ---- 校验音频文件并生成映射 ---- */
