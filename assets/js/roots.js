@@ -41,33 +41,25 @@
   }
 
   function speak(text) {
-    AudioEngine.speakEn(text, Store.settings().rate).then(function (ok) {
-      if (!ok) App.notify('发音不可用，请检查系统语音或网络。');
-    });
+    AudioEngine.speakEn(text, Store.settings().rate);   // 播放失败静默
   }
 
   /* ---------- 异色高亮：词中的词根字母块 ---------- */
-  function highlightRoots(word, partsStr) {
-    var parts = ROOTS.parseParts(partsStr || '');
-    var w = String(word);
-    var lower = w.toLowerCase();
-    var ranges = [];
-    (parts || []).forEach(function (p) {
-      var t = p.t.replace(/[-()（）\s]/g, '').toLowerCase();
-      if (t.length < 2) return;                       // 单字母不高亮，防误伤
-      var idx = lower.indexOf(t);
-      if (idx < 0) return;
-      ranges.push([idx, idx + t.length]);
-    });
-    if (!ranges.length) return escapeHtml(w);
+  /* 区间排序合并（高亮公用） */
+  function mergeRanges(ranges) {
+    if (!ranges.length) return [];
     ranges.sort(function (a, b) { return a[0] - b[0]; });
-    // 合并重叠区间
     var merged = [ranges[0]];
     for (var i = 1; i < ranges.length; i++) {
       var last = merged[merged.length - 1];
       if (ranges[i][0] < last[1]) last[1] = Math.max(last[1], ranges[i][1]);
       else merged.push(ranges[i]);
     }
+    return merged;
+  }
+  /* 按区间渲染异色 HTML（高亮公用） */
+  function renderRanges(w, merged) {
+    if (!merged.length) return escapeHtml(w);
     var out = '', pos = 0;
     merged.forEach(function (r) {
       out += escapeHtml(w.slice(pos, r[0])) +
@@ -76,6 +68,59 @@
     });
     out += escapeHtml(w.slice(pos));
     return out;
+  }
+
+  function highlightRoots(word, partsStr) {
+    var parts = ROOTS.parseParts(partsStr || '');
+    var w = String(word);
+    var lower = w.toLowerCase();
+    var ranges = [];
+    (parts || []).forEach(function (p) {
+      // 拆解段可能带括号变体："sup-(sub)"、"stru(struct)" → 拆成候选 ["sup","sub"]
+      String(p.t).split(/[()]/).forEach(function (raw) {
+        var t = raw.replace(/[-（）\s]/g, '').toLowerCase();
+        if (t.length < 2) return;                     // 单字母不高亮，防误伤
+        var idx = lower.indexOf(t);
+        if (idx >= 0) ranges.push([idx, idx + t.length]);
+      });
+    });
+    return renderRanges(w, mergeRanges(ranges));
+  }
+
+  /* ---------- 词根自动扫描：未登记词族的词也按词源异色 ----------
+     词库 50 词根的所有形态（len≥3）在词中直扫；
+     len<2 的前缀（in/ex/de…）误伤率高，仅限词族登记词使用；
+     黑名单：ten/ven 等高频误伤形态 */
+  var scanRootsCache = null;
+  var SCAN_BLOCK = { ten: 1, ven: 1 };
+  function scanRoots() {
+    if (scanRootsCache) return scanRootsCache;
+    var out = [];
+    ROOTS.list.forEach(function (r) {
+      String(r.r).split(/[/\s]+/).forEach(function (raw) {
+        var t = raw.replace(/[-()（）]/g, '').toLowerCase();
+        if (t.length >= 3 && !SCAN_BLOCK[t] && out.indexOf(t) < 0) out.push(t);
+      });
+    });
+    scanRootsCache = out;
+    return out;
+  }
+  function rootScan(word) {
+    var w = String(word);
+    var lower = w.toLowerCase();
+    var ranges = [];
+    scanRoots().forEach(function (t) {
+      var idx = lower.indexOf(t);
+      if (idx >= 0) ranges.push([idx, idx + t.length]);
+    });
+    return renderRanges(w, mergeRanges(ranges));
+  }
+
+  /* 词的最终异色入口：词族登记词按构词拆解；未登记词自动扫描 */
+  function wordHighlight(word) {
+    var parts = partsOf(word);
+    if (parts) return highlightRoots(word, parts);
+    return rootScan(word);
   }
 
   /* ---------- 异色高亮：例句中包含的目标单词 ---------- */
@@ -104,8 +149,8 @@
     return wordPartsCache[String(word).toLowerCase()] || '';
   }
 
-  /* 词组高亮：锚点词整体异色；词组中其他词若在词库词族，
-     按构词拆解异色其词根字母块（与词根区同规则） */
+  /* 词组高亮：锚点词整体异色；词组中其他词按词根自动异色
+     （词族登记词用构词拆解，其余走自动扫描，与词根区同规则） */
   function highlightPhrase(phrase, anchor) {
     return String(phrase).split(/(\s+)/).map(function (tok) {
       if (!tok || /^\s+$/.test(tok)) return escapeHtml(tok);
@@ -113,9 +158,7 @@
       if (bare && bare.toLowerCase() === String(anchor).toLowerCase()) {
         return highlightInSentence(tok, anchor);   // 锚点词整体异色
       }
-      var parts = bare ? partsOf(bare) : '';
-      if (parts) return highlightRoots(tok, parts); // 词库词：词根块异色
-      return escapeHtml(tok);
+      return bare ? wordHighlight(tok) : escapeHtml(tok);
     }).join('');
   }
 
@@ -240,11 +283,11 @@
         note.textContent = '现场沟通 = 指认锚点名词 + 说状态；锚点词与词库词根均已异色';
         body.appendChild(note);
 
-        // 锚点本名一行（可点读；若在词库词族中，词根块异色）
+        // 锚点本名一行（可点读；词根块自动异色）
         var selfRow = document.createElement('div');
         selfRow.className = 'root-word';
         selfRow.innerHTML =
-          '<span class="rw-main">' + highlightRoots(a.a, partsOf(a.a)) + '</span>' +
+          '<span class="rw-main">' + wordHighlight(a.a) + '</span>' +
           '<span class="rw-zh">' + escapeHtml(a.zh) + '</span>';
         selfRow.addEventListener('click', function () { speak(a.a); });
         body.appendChild(selfRow);
@@ -305,7 +348,7 @@
           var row = document.createElement('div');
           row.className = 'root-word';
           row.innerHTML =
-            '<span class="rw-main">' + highlightRoots(it.w, partsOf(it.w)) + '</span>' +
+            '<span class="rw-main">' + wordHighlight(it.w) + '</span>' +
             '<span class="rw-zh">' + escapeHtml(it.zh) + '</span>';
           row.addEventListener('click', function () { speak(it.w); });
           body.appendChild(row);

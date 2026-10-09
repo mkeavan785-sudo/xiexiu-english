@@ -1,65 +1,66 @@
 /* ============================================================
    邪修英语 · 拼读速听数据 data-blends.js
-   外国孩子学自然拼读的 2/3 字母组合清单（纯组合，无单字母）。
-   播法（每条内嵌两轮完整演示，字母间用句号断出思维间隔）：
-     第一轮：逐字母名（S. H.）→ 组合自然发音两遍（"sh as in ship"）
+   纯组合教学：只有字母组合 + 组合读音，不含任何例词。
+   播法（每条内嵌两轮完整演示，字母间句号断出思维间隔）：
+     第一轮：逐字母名（S. H.）→ 组合读音两遍（Shh. Shh.）
      第二轮：重复上述全流程
-   sound 字段 = 组合与自然发音的搭配（画面展示）；
-   say 字段 = TTS 文本（音频按此生成，一条含两轮）。
-   Magic E / 整词型组合无独立音素搭配，say 为字母名+例词两遍。
+   ipa 字段 = 组合读音音标（画面展示）；
+   say  字段 = TTS 文本，组合读音用"同音拼写"表达
+   （shh/chuh/thuh…），由 en-slow 慢速声道特配生成，
+   保证字正腔圆、吐字清晰。
    ============================================================ */
 window.BLENDS = {
   list: [
     /* ---- 2 字母：辅音组合 ---- */
-    {c:'SH', sound:'sh as in ship',   word:'ship',  zh:'轮船', say:'S. H. Sh as in ship. Sh as in ship. S. H. Sh as in ship. Sh as in ship.'},
-    {c:'CH', sound:'ch as in chair',  word:'chair', zh:'椅子', say:'C. H. Ch as in chair. Ch as in chair. C. H. Ch as in chair. Ch as in chair.'},
-    {c:'TH', sound:'th as in think',  word:'think', zh:'想（清音）', say:'T. H. Th as in think. Th as in think. T. H. Th as in think. Th as in think.'},
-    {c:'TH', sound:'th as in this',   word:'this',  zh:'这个（浊音）', say:'T. H. Th as in this. Th as in this. T. H. Th as in this. Th as in this.'},
-    {c:'CK', sound:'ck as in duck',   word:'duck',  zh:'鸭子', say:'C. K. Ck as in duck. Ck as in duck. C. K. Ck as in duck. Ck as in duck.'},
-    {c:'NG', sound:'ng as in ring',   word:'ring',  zh:'戒指', say:'N. G. Ng as in ring. Ng as in ring. N. G. Ng as in ring. Ng as in ring.'},
-    {c:'QU', sound:'qu as in queen',  word:'queen', zh:'女王', say:'Q. U. Qu as in queen. Qu as in queen. Q. U. Qu as in queen. Qu as in queen.'},
-    {c:'WH', sound:'wh as in wheel',  word:'wheel', zh:'轮子', say:'W. H. Wh as in wheel. Wh as in wheel. W. H. Wh as in wheel. Wh as in wheel.'},
-    {c:'PH', sound:'ph as in phone',  word:'phone', zh:'电话', say:'P. H. Ph as in phone. Ph as in phone. P. H. Ph as in phone. Ph as in phone.'},
+    {c:'SH', ipa:'/ʃ/',  say:'S. H. Shh. Shh. S. H. Shh. Shh.'},
+    {c:'CH', ipa:'/tʃ/', say:'C. H. Chuh. Chuh. C. H. Chuh. Chuh.'},
+    {c:'TH', ipa:'/θ/',  say:'T. H. Thuh. Thuh. T. H. Thuh. Thuh.'},
+    {c:'TH', ipa:'/ð/',  say:'T. H. the. the. T. H. the. the.'},
+    {c:'CK', ipa:'/k/',  say:'C. K. Kuh. Kuh. C. K. Kuh. Kuh.'},
+    {c:'NG', ipa:'/ŋ/',  say:'N. G. Ung. Ung. N. G. Ung. Ung.'},
+    {c:'QU', ipa:'/kw/', say:'Q. U. Kwuh. Kwuh. Q. U. Kwuh. Kwuh.'},
+    {c:'WH', ipa:'/w/',  say:'W. H. Wuh. Wuh. W. H. Wuh. Wuh.'},
+    {c:'PH', ipa:'/f/',  say:'P. H. Fuh. Fuh. P. H. Fuh. Fuh.'},
 
     /* ---- 2 字母：元音组合 ---- */
-    {c:'EE', sound:'ee as in see',    word:'see',   zh:'看见', say:'E. E. Ee as in see. Ee as in see. E. E. Ee as in see. Ee as in see.'},
-    {c:'EA', sound:'ea as in sea',    word:'sea',   zh:'大海', say:'E. A. Ea as in sea. Ea as in sea. E. A. Ea as in sea. Ea as in sea.'},
-    {c:'AI', sound:'ai as in rain',   word:'rain',  zh:'下雨', say:'A. I. Ai as in rain. Ai as in rain. A. I. Ai as in rain. Ai as in rain.'},
-    {c:'AY', sound:'ay as in play',   word:'play',  zh:'玩', say:'A. Y. Ay as in play. Ay as in play. A. Y. Ay as in play. Ay as in play.'},
-    {c:'OO', sound:'oo as in moon',   word:'moon',  zh:'月亮（长音）', say:'O. O. Oo as in moon. Oo as in moon. O. O. Oo as in moon. Oo as in moon.'},
-    {c:'OO', sound:'oo as in book',   word:'book',  zh:'书（短音）', say:'O. O. Oo as in book. Oo as in book. O. O. Oo as in book. Oo as in book.'},
-    {c:'OW', sound:'ow as in cow',    word:'cow',   zh:'奶牛', say:'O. W. Ow as in cow. Ow as in cow. O. W. Ow as in cow. Ow as in cow.'},
-    {c:'OW', sound:'ow as in snow',   word:'snow',  zh:'雪', say:'O. W. Ow as in snow. Ow as in snow. O. W. Ow as in snow. Ow as in snow.'},
-    {c:'OU', sound:'ou as in mouse',  word:'mouse', zh:'老鼠', say:'O. U. Ou as in mouse. Ou as in mouse. O. U. Ou as in mouse. Ou as in mouse.'},
-    {c:'OI', sound:'oi as in coin',   word:'coin',  zh:'硬币', say:'O. I. Oi as in coin. Oi as in coin. O. I. Oi as in coin. Oi as in coin.'},
-    {c:'OY', sound:'oy as in toy',    word:'toy',   zh:'玩具', say:'O. Y. Oy as in toy. Oy as in toy. O. Y. Oy as in toy. Oy as in toy.'},
-    {c:'AR', sound:'ar as in car',    word:'car',   zh:'汽车', say:'A. R. Ar as in car. Ar as in car. A. R. Ar as in car. Ar as in car.'},
-    {c:'OR', sound:'or as in fork',   word:'fork',  zh:'叉子', say:'O. R. Or as in fork. Or as in fork. O. R. Or as in fork. Or as in fork.'},
-    {c:'ER', sound:'er as in her',    word:'her',   zh:'她的', say:'E. R. Er as in her. Er as in her. E. R. Er as in her. Er as in her.'},
-    {c:'IR', sound:'ir as in bird',   word:'bird',  zh:'鸟', say:'I. R. Ir as in bird. Ir as in bird. I. R. Ir as in bird. Ir as in bird.'},
-    {c:'UR', sound:'ur as in nurse',  word:'nurse', zh:'护士', say:'U. R. Ur as in nurse. Ur as in nurse. U. R. Ur as in nurse. Ur as in nurse.'},
-    {c:'AW', sound:'aw as in paw',    word:'paw',   zh:'爪子', say:'A. W. Aw as in paw. Aw as in paw. A. W. Aw as in paw. Aw as in paw.'},
-    {c:'EW', sound:'ew as in new',    word:'new',   zh:'新的', say:'E. W. Ew as in new. Ew as in new. E. W. Ew as in new. Ew as in new.'},
+    {c:'EE', ipa:'/iː/', say:'E. E. Ee. Ee. E. E. Ee. Ee.'},
+    {c:'EA', ipa:'/iː/', say:'E. A. Ee. Ee. E. A. Ee. Ee.'},
+    {c:'AI', ipa:'/eɪ/', say:'A. I. Ay. Ay. A. I. Ay. Ay.'},
+    {c:'AY', ipa:'/eɪ/', say:'A. Y. Ay. Ay. A. Y. Ay. Ay.'},
+    {c:'OO', ipa:'/uː/', say:'O. O. Oo. Oo. O. O. Oo. Oo.'},
+    {c:'OO', ipa:'/ʊ/',  say:'O. O. Uh. Uh. O. O. Uh. Uh.'},
+    {c:'OW', ipa:'/aʊ/', say:'O. W. Ow. Ow. O. W. Ow. Ow.'},
+    {c:'OW', ipa:'/əʊ/', say:'O. W. Oh. Oh. O. W. Oh. Oh.'},
+    {c:'OU', ipa:'/aʊ/', say:'O. U. Ow. Ow. O. U. Ow. Ow.'},
+    {c:'OI', ipa:'/ɔɪ/', say:'O. I. Oy. Oy. O. I. Oy. Oy.'},
+    {c:'OY', ipa:'/ɔɪ/', say:'O. Y. Oy. Oy. O. Y. Oy. Oy.'},
+    {c:'AR', ipa:'/ɑː/', say:'A. R. Ar. Ar. A. R. Ar. Ar.'},
+    {c:'OR', ipa:'/ɔː/', say:'O. R. Or. Or. O. R. Or. Or.'},
+    {c:'ER', ipa:'/ɜː/', say:'E. R. Er. Er. E. R. Er. Er.'},
+    {c:'IR', ipa:'/ɜː/', say:'I. R. Er. Er. I. R. Er. Er.'},
+    {c:'UR', ipa:'/ɜː/', say:'U. R. Er. Er. U. R. Er. Er.'},
+    {c:'AW', ipa:'/ɔː/', say:'A. W. Aw. Aw. A. W. Aw. Aw.'},
+    {c:'EW', ipa:'/juː/',say:'E. W. Ew. Ew. E. W. Ew. Ew.'},
 
-    /* ---- Magic E：元音+E 不发音，元音读本音（组合音=例词本身） ---- */
-    {c:'A-E', word:'cake', zh:'蛋糕', say:'A. E. Cake. Cake. A. E. Cake. Cake.'},
-    {c:'I-E', word:'bike', zh:'自行车', say:'I. E. Bike. Bike. I. E. Bike. Bike.'},
-    {c:'O-E', word:'home', zh:'家', say:'O. E. Home. Home. O. E. Home. Home.'},
-    {c:'U-E', word:'cute', zh:'可爱', say:'U. E. Cute. Cute. U. E. Cute. Cute.'},
+    /* ---- Magic E：元音+E 不发音，元音读本音 ---- */
+    {c:'A-E', ipa:'/eɪ/', say:'A. E. Ay. Ay. A. E. Ay. Ay.'},
+    {c:'I-E', ipa:'/aɪ/', say:'I. E. Eye. Eye. I. E. Eye. Eye.'},
+    {c:'O-E', ipa:'/əʊ/', say:'O. E. Oh. Oh. O. E. Oh. Oh.'},
+    {c:'U-E', ipa:'/juː/',say:'U. E. You. You. U. E. You. You.'},
 
     /* ---- 3 字母组合 ---- */
-    {c:'OUT', word:'out',   zh:'出去', say:'O. U. T. Out. Out. O. U. T. Out. Out.'},
-    {c:'TCH', sound:'tch as in catch',  word:'catch', zh:'抓住', say:'T. C. H. Tch as in catch. Tch as in catch. T. C. H. Tch as in catch. Tch as in catch.'},
-    {c:'DGE', sound:'dge as in bridge', word:'bridge',zh:'桥', say:'D. G. E. Dge as in bridge. Dge as in bridge. D. G. E. Dge as in bridge. Dge as in bridge.'},
-    {c:'IGH', sound:'igh as in high',   word:'high',  zh:'高的', say:'I. G. H. Igh as in high. Igh as in high. I. G. H. Igh as in high. Igh as in high.'},
-    {c:'AIR', sound:'air as in hair',   word:'hair',  zh:'头发', say:'A. I. R. Air as in hair. Air as in hair. A. I. R. Air as in hair. Air as in hair.'},
-    {c:'EAR', sound:'ear as in hear',   word:'hear',  zh:'听见', say:'E. A. R. Ear as in hear. Ear as in hear. E. A. R. Ear as in hear. Ear as in hear.'},
-    {c:'ALL', sound:'all as in ball',   word:'ball',  zh:'球', say:'A. L. L. All as in ball. All as in ball. A. L. L. All as in ball. All as in ball.'},
-    {c:'ING', sound:'ing as in sing',   word:'sing',  zh:'唱', say:'I. N. G. Ing as in sing. Ing as in sing. I. N. G. Ing as in sing. Ing as in sing.'},
-    {c:'ONG', sound:'ong as in song',   word:'song',  zh:'歌', say:'O. N. G. Ong as in song. Ong as in song. O. N. G. Ong as in song. Ong as in song.'},
-    {c:'UCK', sound:'uck as in truck',  word:'truck', zh:'卡车', say:'U. C. K. Uck as in truck. Uck as in truck. U. C. K. Uck as in truck. Uck as in truck.'},
-    {c:'ACK', sound:'ack as in back',   word:'back',  zh:'后面', say:'A. C. K. Ack as in back. Ack as in back. A. C. K. Ack as in back. Ack as in back.'},
-    {c:'ICK', sound:'ick as in kick',   word:'kick',  zh:'踢', say:'I. C. K. Ick as in kick. Ick as in kick. I. C. K. Ick as in kick. Ick as in kick.'},
-    {c:'OCK', sound:'ock as in lock',   word:'lock',  zh:'锁', say:'O. C. K. Ock as in lock. Ock as in lock. O. C. K. Ock as in lock. Ock as in lock.'}
+    {c:'OUT', ipa:'/aʊt/', say:'O. U. T. Owt. Owt. O. U. T. Owt. Owt.'},
+    {c:'TCH', ipa:'/tʃ/',  say:'T. C. H. Chuh. Chuh. T. C. H. Chuh. Chuh.'},
+    {c:'DGE', ipa:'/dʒ/',  say:'D. G. E. Juh. Juh. D. G. E. Juh. Juh.'},
+    {c:'IGH', ipa:'/aɪ/',  say:'I. G. H. Eye. Eye. I. G. H. Eye. Eye.'},
+    {c:'AIR', ipa:'/eə/',  say:'A. I. R. Air. Air. A. I. R. Air. Air.'},
+    {c:'EAR', ipa:'/ɪə/',  say:'E. A. R. Ear. Ear. E. A. R. Ear. Ear.'},
+    {c:'ALL', ipa:'/ɔːl/', say:'A. L. L. Awl. Awl. A. L. L. Awl. Awl.'},
+    {c:'ING', ipa:'/ɪŋ/',  say:'I. N. G. Ing. Ing. I. N. G. Ing. Ing.'},
+    {c:'ONG', ipa:'/ɒŋ/',  say:'O. N. G. Awng. Awng. O. N. G. Awng. Awng.'},
+    {c:'UCK', ipa:'/ʌk/',  say:'U. C. K. Uck. Uck. U. C. K. Uck. Uck.'},
+    {c:'ACK', ipa:'/æk/',  say:'A. C. K. Ack. Ack. A. C. K. Ack. Ack.'},
+    {c:'ICK', ipa:'/ɪk/',  say:'I. C. K. Ick. Ick. I. C. K. Ick. Ick.'},
+    {c:'OCK', ipa:'/ɒk/',  say:'O. C. K. Ock. Ock. O. C. K. Ock. Ock.'}
   ]
 };

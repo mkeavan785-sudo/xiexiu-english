@@ -8,7 +8,7 @@
    代际令牌保证 stop/切词后旧音频立即作废。
    ============================================================ */
 (function () {
-  var manifest = window.AUDIO_MANIFEST || { en: {}, zh: {} };
+  var manifest = window.AUDIO_MANIFEST || { en: {}, zh: {}, 'en-slow': {} };
   var playGen = 0;
   var curAudio = null;     // 当前播放的单例媒体元素
   var preloads = [];       // 预热去重表（最多 8 条）
@@ -26,7 +26,7 @@
 
   /* 语言级音量补偿：实测 edge-tts 响度 en≈-20.0 LUFS / zh≈-19.1 LUFS，
      中文偏响约 0.9 LU，播放中文时按 0.9（≈-0.9dB）拉平 */
-  var LANG_VOLUME = { en: 1.0, zh: 0.9 };
+  var LANG_VOLUME = { en: 1.0, zh: 0.9, 'en-slow': 1.0 };
 
   /* 用户总音量（右上角音量按钮调节，0~1），拖动时正在播的也实时变 */
   var userVolume = (window.Store && typeof Store.settings().volume === 'number')
@@ -42,10 +42,12 @@
   } catch (e) { cacheP = null; }
 
   /* ================= ① 本地 MP3 ================= */
-  /* 清单只存哈希前12位（减体积），路径在这里拼 */
+  /* 清单只存哈希前12位（减体积），路径在这里拼。
+     lang 即清单段键：'en' / 'zh' / 'en-slow'（拼读特配慢速声道） */
   function localPath(lang, text) {
     var t = norm(text);
-    var h = lang === 'zh' ? manifest.zh[t] : manifest.en[t];
+    var seg = manifest[lang];
+    var h = seg ? seg[t] : null;
     return h ? 'assets/audio/' + lang + '/' + h + '.mp3' : null;
   }
 
@@ -401,6 +403,11 @@
         if (ok || genAtCall !== playGen) return ok;
         return whenReady().then(function () { return ttsSpeak(text, 'zh', rate || 0.95); });
       });
+    },
+    /** 拼读特配：en-slow 慢速声道（仅本地 MP3，无在线兜底；
+        是否回退由调用方决定） */
+    speakBlend: function (text, rate) {
+      return playLocal('en-slow', text, rate || 1);
     },
     preload: preload,
     preloadPack: preloadPack,

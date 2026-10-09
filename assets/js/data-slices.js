@@ -8,10 +8,11 @@
      zh   状态标签（朗读，短）
      ctx  语境例句（展示，不朗读）
    与 ROOTS 同级独立，词根页"概念切片"模式渲染。
-   v2：8 概念 68 片（行业现场 + 日常生活并重）
+   v3：14 个大类（8 现场类 + 6 生活类），每类 5 片
    ============================================================ */
 window.SLICES = {
   list: [
+    /* ================= 现场 8 类 ================= */
     {
       c: '装',
       title: '装 · install 家族',
@@ -21,11 +22,7 @@ window.SLICES = {
         {w:'installation', zh:'安装（说过程/系统）', ctx:'Installation stage two. 安装第二步。'},
         {w:'installed', zh:'已装好（状态）', ctx:'Beam installed. 梁装好了。'},
         {w:'mount', zh:'装上（固定到面）', ctx:'Panel mounted. 板装上了。'},
-        {w:'fit', zh:'配装（嵌得进去）', ctx:'Does it fit? 装得进去吗？'},
-        {w:'assemble', zh:'组装（部件拼整体）', ctx:'Assemble the frame. 把框架组装起来。'},
-        {w:'erect', zh:'立起来（竖立安装）', ctx:'Erect the column. 把立柱立起来。'},
-        {w:'attach', zh:'装到…上（附装）', ctx:'Attach the bracket. 装上支架。'},
-        {w:'refit', zh:'重装（返工再装）', ctx:'Refit the panel. 把板重新装一遍。'}
+        {w:'fit', zh:'配装（嵌得进去）', ctx:'Does it fit? 装得进去吗？'}
       ]
     },
     {
@@ -37,10 +34,7 @@ window.SLICES = {
         {w:'tight', zh:'紧的（状态）', ctx:'Make it tight. 拧到紧。'},
         {w:'torque', zh:'扭矩（数值）', ctx:'Check the torque. 查一下扭矩。'},
         {w:'secure', zh:'固定牢靠', ctx:'Make sure it is secure. 确认牢固。'},
-        {w:'fasten', zh:'扣紧（盖板/绑带）', ctx:'Fasten the cover. 盖板扣紧。'},
-        {w:'snug', zh:'预紧（先带到位）', ctx:'Snug all bolts first. 先把螺栓全部预紧。'},
-        {w:'retighten', zh:'复紧（二次拧紧）', ctx:'Retighten after two days. 两天后复紧一遍。'},
-        {w:'stripped', zh:'滑丝了（拧废）', ctx:'The thread is stripped. 丝扣滑了。'}
+        {w:'fasten', zh:'扣紧（盖板/绑带）', ctx:'Fasten the cover. 盖板扣紧。'}
       ]
     },
     {
@@ -52,11 +46,7 @@ window.SLICES = {
         {w:'plumb', zh:'垂直的', ctx:'Check if it is plumb. 看垂直不垂直。'},
         {w:'aligned', zh:'对齐的', ctx:'Get it aligned. 把它对齐。'},
         {w:'straight', zh:'笔直的', ctx:'Keep it straight. 保持笔直。'},
-        {w:'square', zh:'成直角的', ctx:'Make it square. 摆成正角。'},
-        {w:'vertical', zh:'垂直的（通用）', ctx:'Keep it vertical. 保持垂直。'},
-        {w:'tilt', zh:'倾斜', ctx:'There is a tilt. 有点斜。'},
-        {w:'crooked', zh:'歪了（看着歪）', ctx:'It looks crooked. 看着是歪的。'},
-        {w:'shim', zh:'垫片（调平手段）', ctx:'Add a shim here. 这里加个垫片。'}
+        {w:'square', zh:'成直角的', ctx:'Make it square. 摆成正角。'}
       ]
     },
     {
@@ -68,11 +58,7 @@ window.SLICES = {
         {w:'inspect', zh:'检验（正式）', ctx:'The inspector will inspect. 监理要来检验。'},
         {w:'measure', zh:'量（尺寸）', ctx:'Measure the height. 量一下高度。'},
         {w:'look at', zh:'看一眼', ctx:'Come look at this. 来看下这个。'},
-        {w:'go over', zh:'过一遍', ctx:'Go over the list. 把清单过一遍。'},
-        {w:'test', zh:'测试（跑功能）', ctx:'Test the motor. 测一下电机。'},
-        {w:'verify', zh:'核对（对数据）', ctx:'Verify the torque. 核对扭矩值。'},
-        {w:'recheck', zh:'复查（再查一遍）', ctx:'Recheck the level. 水平再复查一遍。'},
-        {w:'count', zh:'点数（清点）', ctx:'Count the parts. 点一下件数。'}
+        {w:'go over', zh:'过一遍', ctx:'Go over the list. 把清单过一遍。'}
       ]
     },
     {
@@ -84,11 +70,7 @@ window.SLICES = {
         {w:'issue', zh:'有问题', ctx:'Any issues? 有问题吗？'},
         {w:'defect', zh:'缺陷（要上报）', ctx:'Report the defect. 上报这个缺陷。'},
         {w:'damage', zh:'损坏', ctx:'Check for damage. 查一下有没有损坏。'},
-        {w:'cracked', zh:'开裂了', ctx:'It is cracked. 裂了。'},
-        {w:'stuck', zh:'卡住了', ctx:'It is stuck. 卡住了。'},
-        {w:'loose', zh:'松了', ctx:'This bolt is loose. 这颗螺栓松了。'},
-        {w:'missing', zh:'缺件（少了）', ctx:'One bolt is missing. 少一颗螺栓。'},
-        {w:'bent', zh:'弯了/变形', ctx:'The rail is bent. 轨道弯了。'}
+        {w:'cracked', zh:'开裂了', ctx:'It is cracked. 裂了。'}
       ]
     },
     {
@@ -100,10 +82,7 @@ window.SLICES = {
         {w:'anchor', zh:'锚固（打地脚）', ctx:'Anchor the column. 立柱锚固。'},
         {w:'clamp', zh:'夹住', ctx:'Clamp it down. 夹紧。'},
         {w:'lock', zh:'锁死', ctx:'Lock the wheel. 轮子锁死。'},
-        {w:'support', zh:'支撑', ctx:'Add a support. 加个支撑。'},
-        {w:'bolt down', zh:'螺栓压紧', ctx:'Bolt down the base. 底座用螺栓压紧。'},
-        {w:'brace', zh:'拉撑住（斜撑）', ctx:'Brace the frame. 把框架撑住。'},
-        {w:'wedge', zh:'楔住（塞楔块）', ctx:'Wedge it tight. 用楔块楔紧。'}
+        {w:'support', zh:'支撑', ctx:'Add a support. 加个支撑。'}
       ]
     },
     {
@@ -115,10 +94,7 @@ window.SLICES = {
         {w:'remove', zh:'拆走', ctx:'Remove the cover. 拆掉盖板。'},
         {w:'dismantle', zh:'拆解（大件）', ctx:'Dismantle the rack. 拆货架。'},
         {w:'disassemble', zh:'拆开（成部件）', ctx:'Disassemble the unit. 把它拆开。'},
-        {w:'uninstall', zh:'卸下（设备）', ctx:'Uninstall the motor. 卸电机。'},
-        {w:'take off', zh:'拆下来（口语）', ctx:'Take off the cover. 把盖板拆下来。'},
-        {w:'take apart', zh:'拆开（口语）', ctx:'Take it apart. 把它拆开。'},
-        {w:'cut off', zh:'割除（破坏性拆）', ctx:'Cut off the weld. 把焊缝割掉。'}
+        {w:'uninstall', zh:'卸下（设备）', ctx:'Uninstall the motor. 卸电机。'}
       ]
     },
     {
@@ -130,10 +106,81 @@ window.SLICES = {
         {w:'align', zh:'对准', ctx:'Align the beam. 对准梁。'},
         {w:'calibrate', zh:'校准（仪器）', ctx:'Calibrate the sensor. 校准传感器。'},
         {w:'set', zh:'设定/归零', ctx:'Set to zero. 归零。'},
-        {w:'tune', zh:'调校（设备）', ctx:'Tune the shuttle. 调穿梭车。'},
-        {w:'fine-tune', zh:'微调', ctx:'Fine-tune the sensor. 微调传感器。'},
-        {w:'reset', zh:'复位/重置', ctx:'Reset the system. 系统复位。'},
-        {w:'correct', zh:'校正（纠偏差）', ctx:'Correct the offset. 校正偏差。'}
+        {w:'tune', zh:'调校（设备）', ctx:'Tune the shuttle. 调穿梭车。'}
+      ]
+    },
+
+    /* ================= 生活 6 类 ================= */
+    {
+      c: '松',
+      title: '松 · loose 家族',
+      note: '"紧"的反面：松了、松脱、晃动',
+      items: [
+        {w:'loose', zh:'松了（状态）', ctx:'The screw is loose. 螺丝松了。'},
+        {w:'come loose', zh:'松脱了', ctx:'It came loose. 它松脱了。'},
+        {w:'slack', zh:'松弛（皮带/绳）', ctx:'The belt is slack. 皮带松了。'},
+        {w:'wiggle', zh:'晃动（能摇得动）', ctx:'It wiggles. 它能晃动。'},
+        {w:'fall off', zh:'脱落/掉了', ctx:'It fell off. 它掉了。'}
+      ]
+    },
+    {
+      c: '开关',
+      title: '开关 · switch 家族',
+      note: '电的开关、门的开关，是不同的词',
+      items: [
+        {w:'turn on', zh:'打开（电/设备）', ctx:'Turn on the light. 开灯。'},
+        {w:'turn off', zh:'关掉', ctx:'Turn off the machine. 关掉机器。'},
+        {w:'open', zh:'打开（门/盖/箱）', ctx:'Open the box. 打开箱子。'},
+        {w:'close', zh:'关上（门/盖）', ctx:'Close the door. 关上门。'},
+        {w:'plug in', zh:'插上电', ctx:'Plug it in. 插上电。'}
+      ]
+    },
+    {
+      c: '拿',
+      title: '拿 · take 家族',
+      note: '拿的方向不同，词就不同',
+      items: [
+        {w:'take', zh:'拿走', ctx:'Take this one. 拿这个。'},
+        {w:'bring', zh:'带来', ctx:'Bring it here. 拿过来。'},
+        {w:'pick up', zh:'捡起/接', ctx:'Pick it up. 捡起来。'},
+        {w:'hold', zh:'拿住/扶住', ctx:'Hold this. 扶住这个。'},
+        {w:'carry', zh:'搬运', ctx:'Carry it over. 搬过去。'}
+      ]
+    },
+    {
+      c: '放',
+      title: '放 · put 家族',
+      note: '怎么放、放哪，一个状态一个词',
+      items: [
+        {w:'put', zh:'放', ctx:'Put it here. 放这儿。'},
+        {w:'place', zh:'摆放到位', ctx:'Place it on the rack. 摆到架上。'},
+        {w:'set down', zh:'放下', ctx:'Set it down. 放下来。'},
+        {w:'stack', zh:'码放（叠起来）', ctx:'Stack them up. 码起来。'},
+        {w:'lay', zh:'平放（横着放）', ctx:'Lay it flat. 平着放。'}
+      ]
+    },
+    {
+      c: '快慢',
+      title: '快慢 · speed 家族',
+      note: '说东西快慢、说人赶紧，是不同词',
+      items: [
+        {w:'fast', zh:'快的', ctx:'Too fast. 太快了。'},
+        {w:'slow', zh:'慢的', ctx:'Go slow. 慢点。'},
+        {w:'speed up', zh:'加速', ctx:'Speed it up. 加速。'},
+        {w:'slow down', zh:'减速', ctx:'Slow down. 慢下来。'},
+        {w:'hurry', zh:'赶紧（人）', ctx:'Hurry up. 赶紧的。'}
+      ]
+    },
+    {
+      c: '够',
+      title: '够 · enough 家族',
+      note: '够不够、多不多，一个量一个词',
+      items: [
+        {w:'enough', zh:'够了', ctx:'Enough. 够了。'},
+        {w:'too much', zh:'太多了', ctx:'Too much. 太多了。'},
+        {w:'more', zh:'多一点', ctx:'A little more. 再来一点。'},
+        {w:'less', zh:'少一点', ctx:'A little less. 少一点。'},
+        {w:'full', zh:'满了', ctx:'It is full. 满了。'}
       ]
     }
   ]

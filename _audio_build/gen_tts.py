@@ -20,7 +20,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 AUDIO = os.path.join(ROOT, 'assets', 'audio')
 
-VOICE = {'en': 'en-GB-SoniaNeural', 'zh': 'zh-CN-XiaoxiaoNeural'}
+VOICE = {'en': 'en-GB-SoniaNeural', 'zh': 'zh-CN-XiaoxiaoNeural',
+         'en-slow': 'en-GB-SoniaNeural'}
+# en-slow：拼读特配慢速声道，语速降 15%，字正腔圆、吐字清晰
+RATE = {'en-slow': '-15%'}
 CONCURRENCY = 6
 RETRIES = 3
 
@@ -44,7 +47,7 @@ async def gen_one(sem, lang, text, done, total, failed):
     async with sem:
         for attempt in range(1, RETRIES + 1):
             try:
-                com = edge_tts.Communicate(text, VOICE[lang])
+                com = edge_tts.Communicate(text, VOICE[lang], rate=RATE.get(lang, '+0%'))
                 await com.save(out)
                 if os.path.getsize(out) > 0:
                     done[0] += 1
@@ -83,7 +86,7 @@ async def main():
 
     sem = asyncio.Semaphore(CONCURRENCY)
     all_failed = []
-    for lang in ([only] if only else ['en', 'zh']):
+    for lang in ([only] if only else ['en', 'zh', 'en-slow']):
         items = sorted(set(norm(t) for t in texts.get(lang, []) if norm(t)))
         done = [0]
         failed = []

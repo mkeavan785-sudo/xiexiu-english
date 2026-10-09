@@ -41,6 +41,7 @@ const W = global.window;
 /* ---- 抽取全部待发声文本 ---- */
 const en = new Set();
 const zh = new Set();
+const enSlow = new Set();   // 拼读特配：慢速声道（en-slow）
 
 // 磨耳朵场景词：英文 w + 中文 zh
 W.IMMERSION.scenes.forEach(sc => sc.items.forEach(it => {
@@ -70,9 +71,9 @@ W.ROOTS.list.forEach(r => (r.w || []).forEach(it => {
   if (it.zh) zh.add(norm(it.zh));
 }));
 
-// 拼读速听：播报文本（字母名+整词，内嵌两遍），只发英文
+// 拼读速听：播报文本（字母名+组合读音，内嵌两轮）→ en-slow 慢速声道特配
 (W.BLENDS ? W.BLENDS.list : []).forEach(b => {
-  if (b.say) en.add(norm(b.say));
+  if (b.say) enSlow.add(norm(b.say));
 });
 
 // 锚点名词：锚点本名 + 配套词组（英语和中文翻译均朗读）
@@ -99,10 +100,11 @@ function build(lang, set) {
 
 /* ---- 同步写出 texts.json（gen_tts.py 的输入，单一数据源） ---- */
 fs.writeFileSync(path.join(__dirname, 'texts.json'),
-  JSON.stringify({ en: [...en].sort(), zh: [...zh].sort() }, null, 0), 'utf8');
+  JSON.stringify({ en: [...en].sort(), zh: [...zh].sort(), 'en-slow': [...enSlow].sort() }, null, 0), 'utf8');
 
 const enRes = build('en', en);
 const zhRes = build('zh', zh);
+const slowRes = build('en-slow', enSlow);
 
 /* ---- 写出清单（键按字典序；值为md5前12位，路径由 audio.js 运行时拼接，省40%体积） ---- */
 function sortKeys(o) {
@@ -116,9 +118,10 @@ function toHashes(map) {
 const out =
   '/* 自动生成：_audio_build/make_manifest.js —— 请勿手工编辑\n' +
   '   文本→MP3哈希（md5(lang|text) 前12位），路径 audio.js 运行时拼，覆盖 ' +
-  Object.keys(enRes.map).length + ' 英 + ' + Object.keys(zhRes.map).length + ' 中 */\n' +
+  Object.keys(enRes.map).length + ' 英 + ' + Object.keys(zhRes.map).length + ' 中 + ' +
+  Object.keys(slowRes.map).length + ' 慢 */\n' +
   'window.AUDIO_MANIFEST = ' +
-  JSON.stringify({ en: toHashes(enRes.map), zh: toHashes(zhRes.map) }, null, 0) + ';\n';
+  JSON.stringify({ en: toHashes(enRes.map), zh: toHashes(zhRes.map), 'en-slow': toHashes(slowRes.map) }, null, 0) + ';\n';
 
 const outFile = path.join(JS, 'audio-manifest.js');
 fs.writeFileSync(outFile, out, 'utf8');
@@ -128,6 +131,9 @@ console.log('英文词条: ' + en.size + '，命中 ' + Object.keys(enRes.map).l
   '，缺失 ' + enRes.missing.length);
 console.log('中文词条: ' + zh.size + '，命中 ' + Object.keys(zhRes.map).length +
   '，缺失 ' + zhRes.missing.length);
+console.log('慢速词条: ' + enSlow.size + '，命中 ' + Object.keys(slowRes.map).length +
+  '，缺失 ' + slowRes.missing.length);
 if (enRes.missing.length) console.log('缺英文音频: ' + JSON.stringify(enRes.missing.slice(0, 20)));
 if (zhRes.missing.length) console.log('缺中文音频: ' + JSON.stringify(zhRes.missing.slice(0, 20)));
+if (slowRes.missing.length) console.log('缺慢速音频: ' + JSON.stringify(slowRes.missing.slice(0, 20)));
 console.log('清单已写出: ' + outFile + '（' + (fs.statSync(outFile).size / 1024).toFixed(1) + ' KB）');

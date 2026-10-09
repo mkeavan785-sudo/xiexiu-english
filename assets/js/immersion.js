@@ -12,13 +12,6 @@
   var playing = false;
   var loopToken = 0;
   var waitCancel = null;
-  var lastWarnAt = 0;
-
-  /* 失败提示节流：同一轮播放最多 12 秒弹一次，避免刷屏 */
-  function warn(msg) {
-    var now = Date.now();
-    if (now - lastWarnAt > 12000) { lastWarnAt = now; App.notify(msg); }
-  }
 
   // 单词模式进度（含跨场景定位）
   var sIdx = 0, iIdx = 0;
@@ -138,7 +131,6 @@
         showWord();
         return AudioEngine.speakEn(it.w, s.rate).then(function (ok) {
           if (!playing || token !== loopToken) return;
-          if (!ok) warn('当前环境无法发音：系统语音不可用，在线发音也失败，请检查网络或系统语音。');
           // 英文播完的间隙预热：当前中文 + 下一条英文，循环无缝
           AudioEngine.preload('zh', it.zh);
           var sc = scenes()[sIdx];
@@ -164,7 +156,7 @@
       showSentence();
       return AudioEngine.speakZh(item.zh || '', 0.95).then(function () {
         if (!playing || token !== loopToken) return;
-        return wait(adaptiveGap());   // 中文长短不同，间隔自适应
+        return wait(Math.min(1000, adaptiveGap()));   // 中英衔接压到 1 秒内
       }).then(function () {
         if (!playing || token !== loopToken) return;
         // 中文播完的间隙预热下一句英文
@@ -176,9 +168,8 @@
           (function (n) {
             chain = chain.then(function () {
               if (!playing || token !== loopToken) return;
-              return AudioEngine.speakEn(item.en, s.rate).then(function (ok) {
-                if (!ok) warn('英文朗读不可用：系统语音缺失，在线发音也失败，请检查网络或系统语音。');
-                if (n < reps - 1) return wait(600);
+              return AudioEngine.speakEn(item.en, s.rate).then(function () {
+                if (n < reps - 1) return wait(600);   // 英文重复朗读之间的短间隔
               });
             });
           })(i);
@@ -189,7 +180,7 @@
         Store.get().stats.listenWords++;
         sPos++;
         if (sPos >= sQueue.length) { rebuildSentences(); sPos = 0; }
-        return wait(adaptiveGap());   // 句尾间隔同样自适应（英文越长收尾越缓）
+        return wait(Math.min(1000, adaptiveGap()));   // 句尾衔接同样压到 1 秒内
       }).then(function () {
         if (!playing || token !== loopToken) return;
         return again();
@@ -209,9 +200,8 @@
   function start() {
     if (playing) return;
     var cap = AudioEngine.capabilities();
-    // 英文有在线原声兜底，只在"无引擎且离线"时才拒绝启动
+    // 英文有在线原声兜底，只在"无引擎且离线"时才拒绝启动（静默不播，无提示）
     if (!cap.tts && !navigator.onLine) {
-      App.notify('发音不可用：本机没有语音引擎且当前离线。');
       return;
     }
     // 开启自动联播前，首次询问是否后台播放（每会话最多一次，已开常亮不打扰）
@@ -416,14 +406,6 @@
     el.wake.addEventListener('change', function () {
       Store.settings({ wakeLock: el.wake.checked });
       if (playing) AudioEngine.wake.setWant(el.wake.checked);
-    });
-
-    AudioEngine.whenReady().then(function () {
-      var cap = AudioEngine.capabilities();
-      // 本地 MP3 是主力（覆盖全部词库），仅当本地清单为空且无英文引擎时才提示
-      if (cap.tts && !cap.enVoice && !cap.localEn) {
-        App.notify('本机无英文语音，英文将使用在线原声（需联网）；可在系统设置安装英语语音包离线使用。', 6000);
-      }
     });
   }
 

@@ -1,112 +1,113 @@
 /* ============================================================
    邪修英语 · 锚点名词数据 data-anchors.js
-   设计理念（名词锚点思维）：现场沟通 = 指认锚点名词 + 说状态。
-   每条 = 1 个高频现场名词（锚点，优先选磨耳朵/词库已有词）
-        + 它周围最高频的配套词组（动作/状态/问题），成组记忆。
+   设计理念（名词锚点思维）：沟通 = 指认锚点名词 + 说状态。
+   锚点选词原则：民间日常高频名词（time/water/money/food…），
+   每条 = 1 个高频名词（锚点）+ 它周围最高频的配套词组
+   （动作/状态/问题），成组记忆。
    phr.w 中的锚点词在前端自动异色显示（沿用高亮规则）。
    a.zh  仅展示；a 本身、phr.w、phr.zh 均朗读。
    ============================================================ */
 window.ANCHORS = {
   list: [
     {
-      a: 'beam', zh: '横梁',
+      a: 'time', zh: '时间',
       phr: [
-        {w:'hoist the beam', zh:'吊装横梁'},
-        {w:'beam alignment', zh:'横梁对位'},
-        {w:'beam not level', zh:'横梁不水平'},
-        {w:'set the beam', zh:'横梁就位'},
-        {w:'bolt the beam', zh:'紧固横梁'},
-        {w:'beam load capacity', zh:'横梁载重'}
+        {w:'what time', zh:'几点了'},
+        {w:'on time', zh:'准时'},
+        {w:'take your time', zh:'慢慢来'},
+        {w:'no time', zh:'没时间'},
+        {w:'save time', zh:'省时间'},
+        {w:'have a good time', zh:'玩得开心'}
       ]
     },
     {
-      a: 'gap', zh: '间隙',
+      a: 'water', zh: '水',
       phr: [
-        {w:'check the gap', zh:'检查间隙'},
-        {w:'gap too wide', zh:'间隙太大'},
-        {w:'close the gap', zh:'收小间隙'},
-        {w:'gap tolerance', zh:'间隙公差'},
-        {w:'zero gap', zh:'零间隙'}
+        {w:'drink water', zh:'喝水'},
+        {w:'hot water', zh:'热水'},
+        {w:'cold water', zh:'凉水'},
+        {w:'fill the water', zh:'接点水'},
+        {w:'water is boiling', zh:'水开了'}
       ]
     },
     {
-      a: 'bolt', zh: '螺栓',
+      a: 'money', zh: '钱',
       phr: [
-        {w:'tighten the bolt', zh:'拧紧螺栓'},
-        {w:'bolt loose', zh:'螺栓松动'},
-        {w:'bolt missing', zh:'螺栓缺失'},
-        {w:'torque the bolt', zh:'给螺栓施加扭矩'},
-        {w:'anchor bolt', zh:'地脚螺栓'}
+        {w:'save money', zh:'省钱'},
+        {w:'spend money', zh:'花钱'},
+        {w:'pay the money', zh:'付钱'},
+        {w:'no money', zh:'没钱'},
+        {w:'short of money', zh:'钱不够'}
       ]
     },
     {
-      a: 'column', zh: '立柱',
+      a: 'food', zh: '饭 / 食物',
       phr: [
-        {w:'column erection', zh:'立柱安装'},
-        {w:'column plumb', zh:'立柱垂直'},
-        {w:'column base', zh:'立柱底脚'},
-        {w:'brace the column', zh:'支撑立柱'},
-        {w:'column alignment', zh:'立柱对位'}
+        {w:'order food', zh:'点餐'},
+        {w:'fast food', zh:'快餐'},
+        {w:'food is ready', zh:'饭好了'},
+        {w:'junk food', zh:'垃圾食品'},
+        {w:'takeout food', zh:'外卖'}
       ]
     },
     {
-      a: 'pallet', zh: '托盘',
+      a: 'home', zh: '家',
       phr: [
-        {w:'pallet position', zh:'托盘货位'},
-        {w:'pallet in place', zh:'托盘就位'},
-        {w:'empty pallet', zh:'空托盘'},
-        {w:'pallet size', zh:'托盘尺寸'},
-        {w:'stack the pallet', zh:'码托盘'}
+        {w:'go home', zh:'回家'},
+        {w:'at home', zh:'在家'},
+        {w:'stay home', zh:'待在家'},
+        {w:'feel at home', zh:'像在自己家'},
+        {w:'home alone', zh:'独自在家'}
       ]
     },
     {
-      a: 'crane', zh: '堆垛机',
+      a: 'door', zh: '门',
       phr: [
-        {w:'crane rail', zh:'堆垛机导轨'},
-        {w:'crane travel', zh:'堆垛机行走'},
-        {w:'test the crane', zh:'测试堆垛机'},
-        {w:'crane speed', zh:'堆垛机速度'},
-        {w:'crane limit switch', zh:'堆垛机限位'}
+        {w:'open the door', zh:'开门'},
+        {w:'close the door', zh:'关门'},
+        {w:'knock on the door', zh:'敲门'},
+        {w:'front door', zh:'前门'},
+        {w:'door is locked', zh:'门锁着'}
       ]
     },
     {
-      a: 'forklift', zh: '叉车',
+      a: 'car', zh: '车',
       phr: [
-        {w:'forklift passage', zh:'叉车通道'},
-        {w:'drive the forklift', zh:'开叉车'},
-        {w:'forklift forks', zh:'叉车货叉'},
-        {w:'forklift access', zh:'叉车进入'},
-        {w:'forklift turning radius', zh:'叉车转弯半径'}
+        {w:'drive the car', zh:'开车'},
+        {w:'park the car', zh:'停车'},
+        {w:'wash the car', zh:'洗车'},
+        {w:'rent a car', zh:'租车'},
+        {w:'car broke down', zh:'车抛锚了'}
       ]
     },
     {
-      a: 'torque', zh: '扭矩',
+      a: 'phone', zh: '手机',
       phr: [
-        {w:'torque value', zh:'扭矩值'},
-        {w:'torque wrench', zh:'扭矩扳手'},
-        {w:'check the torque', zh:'检查扭矩'},
-        {w:'final torque', zh:'终拧扭矩'},
-        {w:'torque mark', zh:'扭矩划线'}
+        {w:'check the phone', zh:'看手机'},
+        {w:'charge the phone', zh:'给手机充电'},
+        {w:'phone is dead', zh:'手机没电了'},
+        {w:'answer the phone', zh:'接电话'},
+        {w:'call my phone', zh:'打我手机'}
       ]
     },
     {
-      a: 'rail', zh: '导轨',
+      a: 'work', zh: '工作 / 活',
       phr: [
-        {w:'rail alignment', zh:'导轨对位'},
-        {w:'ground rail', zh:'地导轨'},
-        {w:'rail joint', zh:'导轨接缝'},
-        {w:'lubricate the rail', zh:'润滑导轨'},
-        {w:'rail level', zh:'导轨水平'}
+        {w:'go to work', zh:'上班'},
+        {w:'at work', zh:'在上班'},
+        {w:'a lot of work', zh:'活很多'},
+        {w:'finish work', zh:'干完活了'},
+        {w:'work overtime', zh:'加班'}
       ]
     },
     {
-      a: 'level', zh: '水平',
+      a: 'day', zh: '天 / 日子',
       phr: [
-        {w:'check the level', zh:'检查水平'},
-        {w:'not level', zh:'不水平'},
-        {w:'level adjustment', zh:'调平'},
-        {w:'spirit level', zh:'水平仪'},
-        {w:'level from left to right', zh:'从左到右找平'}
+        {w:'every day', zh:'每天'},
+        {w:'all day', zh:'一整天'},
+        {w:'day off', zh:'休息日'},
+        {w:'the other day', zh:'前几天'},
+        {w:'have a nice day', zh:'祝你今天愉快'}
       ]
     }
   ]

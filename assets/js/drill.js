@@ -20,11 +20,12 @@
   }
   function stopSpeak() { speakToken++; AudioEngine.stop(); }
 
+  /* 拼读播报：优先 en-slow 特配慢速声道（字正腔圆），缺音频回退常规英音 */
   function speak(text) {
     stopSpeak();
     var token = speakToken;
-    AudioEngine.speakEn(text, Store.settings().rate).then(function (ok) {
-      if (!ok && token === speakToken) App.notify('发音不可用，请检查网络。');
+    AudioEngine.speakBlend(text, Store.settings().rate).then(function (ok) {
+      if (!ok && token === speakToken) AudioEngine.speakEn(text, Store.settings().rate);
     });
   }
 
@@ -78,15 +79,12 @@
     BLENDS.list.forEach(function (b) {
       var row = document.createElement('div');
       row.className = 'bl-row';
-      var inner =
+      // 纯组合教学：字母组合 + 组合读音音标，无例词
+      row.innerHTML =
         '<div class="bl-main">' +
           '<span class="bl-letters">' + escapeHtml(b.c) + '</span>' +
-          '<span class="bl-word">' + escapeHtml(b.word) + '</span>' +
-          '<span class="bl-zh">' + escapeHtml(b.zh) + '</span>' +
+          '<span class="bl-sound">' + escapeHtml(b.ipa || '') + '</span>' +
         '</div>';
-      // 组合 ↔ 自然发音搭配（有独立音素的组合才显示）
-      if (b.sound) inner += '<div class="bl-sound">' + escapeHtml(b.sound) + '</div>';
-      row.innerHTML = inner;
       row.addEventListener('click', function () { speak(b.say); });
       box.appendChild(row);
     });
@@ -103,7 +101,9 @@
       if (i >= BLENDS.list.length) { el.blPlay.textContent = '▶ 全部连播'; return; }
       var b = BLENDS.list[i++];
       el.blList.querySelectorAll('.bl-row')[i - 1].classList.add('speaking');
-      AudioEngine.speakEn(b.say, Store.settings().rate).then(function () {
+      AudioEngine.speakBlend(b.say, Store.settings().rate).catch(function () { return false; }).then(function (ok) {
+        if (!ok) return AudioEngine.speakEn(b.say, Store.settings().rate).catch(function () {});
+      }).then(function () {
         var row = el.blList.querySelectorAll('.bl-row')[i - 1];
         if (row) row.classList.remove('speaking');
         next();

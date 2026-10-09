@@ -87,12 +87,10 @@
         '<span class="rw-main my-main">' + escapeHtml(item.en) + '</span>' +
         '<span class="rw-zh">' + escapeHtml(item.zh || '') + '</span>' +
         '<button class="rw-del" aria-label="删除">✕</button>';
-      // 点击整行即点读（删除按钮单独拦截）
+      // 点击整行即点读（删除按钮单独拦截）；播放失败静默
       row.addEventListener('click', function (e) {
         if (e.target.closest('.rw-del')) return;
-        AudioEngine.speakEn(item.en, Store.settings().rate).then(function (ok) {
-          if (!ok) App.notify('发音不可用，请检查系统语音或网络。');
-        });
+        AudioEngine.speakEn(item.en, Store.settings().rate);
       });
       row.querySelector('.rw-del').addEventListener('click', function () { removeSentence(i); });
       box.appendChild(row);
