@@ -34,6 +34,7 @@ load('data-roots.js');
 load('data-sentences.js');
 load('data-immersion.js');
 load('data-slices.js');
+load('data-blends.js');
 const W = global.window;
 
 /* ---- 抽取全部待发声文本 ---- */
@@ -67,6 +68,11 @@ W.ROOTS.list.forEach(r => (r.w || []).forEach(it => {
   if (it.w) en.add(norm(it.w));
   if (it.zh) zh.add(norm(it.zh));
 }));
+
+// 拼读速听：播报文本（字母名+整词，内嵌两遍），只发英文
+(W.BLENDS ? W.BLENDS.list : []).forEach(b => {
+  if (b.say) en.add(norm(b.say));
+});
 
 /* ---- 校验音频文件并生成映射 ---- */
 function build(lang, set) {

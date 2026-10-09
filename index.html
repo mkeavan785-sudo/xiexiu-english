@@ -6,7 +6,7 @@
 <title>邪修英语 · 速成</title>
 <meta name="theme-color" content="#0b0b0d">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="assets/css/style.css?v=1.7">
+<link rel="stylesheet" href="assets/css/style.css?v=1.8">
 </head>
 <body>
 
@@ -42,7 +42,7 @@
   <div class="topbar-right">
     <nav class="desktop-nav" id="desktop-nav">
       <button class="nav-btn active" data-page="immersion">🎧<span>磨耳朵</span></button>
-      <button class="nav-btn" data-page="drill">📖<span>熟读</span></button>
+      <button class="nav-btn" data-page="drill">📖<span>拼读</span></button>
       <button class="nav-btn" data-page="roots">🌳<span>词根</span></button>
       <button class="nav-btn" data-page="mine">📓<span>我的</span></button>
     </nav>
@@ -143,29 +143,26 @@
     </div>
   </section>
 
-  <!-- ============ 熟读 ============ -->
+  <!-- ============ 自然拼读 ============ -->
   <section class="page" id="page-drill">
-    <!-- 阶段选择（可加练其他阶段） -->
-    <div class="stage-chips" id="dr-stage-chips"></div>
-
-    <!-- 组卡片 -->
-    <div class="drill-card" id="dr-card">
-      <div class="dr-group-top">
-        <span class="dr-group-title" id="dr-group-title">短元音 a</span>
-        <span class="dr-pattern" id="dr-pattern">/æ/ 如 cat</span>
+    <!-- 上块：拼读速听（逐字母+整词，读两遍） -->
+    <div class="blends-top">
+      <div class="blends-head">
+        <div class="blends-title">🔤 拼读速听</div>
+        <button class="fold-play" id="bl-play">▶ 全部连播</button>
       </div>
-      <p class="dr-tip" id="dr-tip"></p>
-      <div class="dr-words" id="dr-words"></div>
-      <button class="play-main" id="dr-readall">🔊 整组连读</button>
-      <button class="dr-next-btn" id="dr-next">读完了，下一组 →</button>
+      <div class="blends-sub">外国孩子的拼读清单：逐字母拼 + 整词，每条自动读两遍。点单条可单听。</div>
+      <div class="blends-list" id="bl-list"></div>
     </div>
 
-    <!-- 完成态 -->
-    <div class="drill-done hidden" id="dr-done">
-      <div class="done-emoji">🎉</div>
-      <h2 id="dr-done-title">今日熟读完成</h2>
-      <p id="dr-done-sub">明天进入下一阶段，连续打卡别断</p>
-      <button class="dr-review-btn" id="dr-review">回看今日词组</button>
+    <!-- 下块：组合与单词（折叠点读） -->
+    <div class="groups-fold">
+      <div class="groups-head">
+        <div class="groups-title">📖 组合与单词</div>
+        <button class="fold-play" id="gp-play">▶ 一键连播</button>
+      </div>
+      <div class="groups-sub">点组合展开，点单词本身发音；单词里的目标组合已异色标出</div>
+      <div id="dr-list" class="roots-list"></div>
     </div>
   </section>
 
@@ -228,10 +225,6 @@
     <!-- 学习设置 -->
     <div class="mine-settings">
       <h3>学习设置</h3>
-      <label class="setting-row switch-row">
-        <span>熟读包含「阶段0 字母单音」（8天一轮）</span>
-        <input type="checkbox" id="set-letters">
-      </label>
       <p class="setting-note">发音已统一为英式。听过的音频会自动缓存，断网也能继续播放。所有学习数据仅保存在本设备浏览器，清理浏览器数据前请先导出备份。</p>
     </div>
   </section>
@@ -241,26 +234,27 @@
 <!-- 手机底部导航 -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="nav-btn active" data-page="immersion"><span class="nav-ico">🎧</span><span>磨耳朵</span></button>
-  <button class="nav-btn" data-page="drill"><span class="nav-ico">📖</span><span>熟读</span></button>
+  <button class="nav-btn" data-page="drill"><span class="nav-ico">📖</span><span>拼读</span></button>
   <button class="nav-btn" data-page="roots"><span class="nav-ico">🌳</span><span>词根</span></button>
   <button class="nav-btn" data-page="mine"><span class="nav-ico">📓</span><span>我的</span></button>
 </nav>
 
 <!-- 数据文件（普通 script，file:// 双击可用；顺序不可乱）-->
 <!-- 版本号 v=1.4：发版统一升级，强制手机端拉新，防新旧文件混搭 -->
-<script src="assets/js/data-phonics.js?v=1.7"></script>
-<script src="assets/js/data-roots.js?v=1.7"></script>
-<script src="assets/js/data-sentences.js?v=1.7"></script>
-<script src="assets/js/data-immersion.js?v=1.7"></script>
-<script src="assets/js/data-slices.js?v=1.7"></script>
-<script src="assets/js/audio-manifest.js?v=1.7"></script>
-<script src="assets/js/store.js?v=1.7"></script>
-<script src="assets/js/audio.js?v=1.7"></script>
-<script src="assets/js/immersion.js?v=1.7"></script>
-<script src="assets/js/drill.js?v=1.7"></script>
-<script src="assets/js/roots.js?v=1.7"></script>
-<script src="assets/js/my.js?v=1.7"></script>
-<script src="assets/js/app.js?v=1.7"></script>
-<script src="assets/js/boot.js?v=1.7"></script>
+<script src="assets/js/data-phonics.js?v=1.8"></script>
+<script src="assets/js/data-roots.js?v=1.8"></script>
+<script src="assets/js/data-sentences.js?v=1.8"></script>
+<script src="assets/js/data-immersion.js?v=1.8"></script>
+<script src="assets/js/data-slices.js?v=1.8"></script>
+<script src="assets/js/data-blends.js?v=1.8"></script>
+<script src="assets/js/audio-manifest.js?v=1.8"></script>
+<script src="assets/js/store.js?v=1.8"></script>
+<script src="assets/js/audio.js?v=1.8"></script>
+<script src="assets/js/immersion.js?v=1.8"></script>
+<script src="assets/js/drill.js?v=1.8"></script>
+<script src="assets/js/roots.js?v=1.8"></script>
+<script src="assets/js/my.js?v=1.8"></script>
+<script src="assets/js/app.js?v=1.8"></script>
+<script src="assets/js/boot.js?v=1.8"></script>
 </body>
 </html>

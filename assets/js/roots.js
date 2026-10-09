@@ -46,6 +46,47 @@
     });
   }
 
+  /* ---------- 异色高亮：词中的词根字母块 ---------- */
+  function highlightRoots(word, partsStr) {
+    var parts = ROOTS.parseParts(partsStr || '');
+    var w = String(word);
+    var lower = w.toLowerCase();
+    var ranges = [];
+    (parts || []).forEach(function (p) {
+      var t = p.t.replace(/[-()（）\s]/g, '').toLowerCase();
+      if (t.length < 2) return;                       // 单字母不高亮，防误伤
+      var idx = lower.indexOf(t);
+      if (idx < 0) return;
+      ranges.push([idx, idx + t.length]);
+    });
+    if (!ranges.length) return escapeHtml(w);
+    ranges.sort(function (a, b) { return a[0] - b[0]; });
+    // 合并重叠区间
+    var merged = [ranges[0]];
+    for (var i = 1; i < ranges.length; i++) {
+      var last = merged[merged.length - 1];
+      if (ranges[i][0] < last[1]) last[1] = Math.max(last[1], ranges[i][1]);
+      else merged.push(ranges[i]);
+    }
+    var out = '', pos = 0;
+    merged.forEach(function (r) {
+      out += escapeHtml(w.slice(pos, r[0])) +
+        '<span class="hl-word">' + escapeHtml(w.slice(r[0], r[1])) + '</span>';
+      pos = r[1];
+    });
+    out += escapeHtml(w.slice(pos));
+    return out;
+  }
+
+  /* ---------- 异色高亮：例句中包含的目标单词 ---------- */
+  function highlightInSentence(ctx, word) {
+    var safe = escapeHtml(ctx);
+    var w = String(word).trim();
+    if (!w) return safe;
+    var re = new RegExp('\\b(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')\\b', 'i');
+    return safe.replace(re, '<span class="hl-word">$1</span>');
+  }
+
   /* ---------- 渲染 · 词根模式 ---------- */
   function renderRoots() {
     el.list.innerHTML = '';
@@ -86,7 +127,7 @@
           row.className = 'root-word';
           row.innerHTML =
             '<span class="rw-star">' + (ind ? '⭐' : '') + '</span>' +
-            '<span class="rw-main">' + escapeHtml(w) + '</span>' +
+            '<span class="rw-main">' + highlightRoots(w, partsStr) + '</span>' +
             '<span class="rw-zh">' + escapeHtml(zh) + '</span>';
           row.addEventListener('click', function () { speak(w); });
           wrap.appendChild(row);
@@ -166,7 +207,7 @@
 
           var ctx = document.createElement('div');
           ctx.className = 'slice-ctx';
-          ctx.textContent = it.ctx;
+          ctx.innerHTML = '▸ ' + highlightInSentence(it.ctx, it.w);
           body.appendChild(ctx);
         });
         item.appendChild(body);

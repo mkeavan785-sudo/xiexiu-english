@@ -488,6 +488,44 @@ button{background:none;border:none;cursor:pointer}
 }
 .slice-ctx::before{content:'▸ ';color:var(--accent)}
 
+/* ---------- 拼读页（上块速听 + 下块折叠点读） ---------- */
+.blends-top,.groups-fold{margin-bottom:16px}
+.blends-head,.groups-head{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;
+}
+.blends-title,.groups-title{font-size:15px;font-weight:800;color:var(--ink)}
+.blends-sub,.groups-sub{font-size:12px;color:var(--faint);line-height:1.6;margin-bottom:10px}
+.fold-play{
+  flex:0 0 auto;min-height:44px;padding:8px 16px;border-radius:999px;
+  font-size:13px;font-weight:700;
+  background:var(--accent);color:#1a1407;border:1px solid var(--accent);
+  transition:.15s var(--ease);
+}
+.fold-play:active{transform:scale(.95);background:var(--accent-press)}
+.blends-list{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:10px}
+.bl-row{
+  display:flex;align-items:center;gap:10px;min-height:44px;
+  padding:8px 12px;border-radius:10px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;transition:.12s var(--ease);
+}
+.bl-row:active{transform:scale(.985);border-color:var(--accent)}
+.bl-row.speaking{border-color:var(--accent);background:rgba(255,194,71,.10)}
+.bl-letters{
+  font-size:17px;font-weight:900;color:var(--accent);letter-spacing:1px;
+  min-width:52px;
+}
+.bl-word{font-size:15px;font-weight:700;color:var(--ink)}
+.bl-zh{margin-left:auto;font-size:12px;color:var(--faint)}
+.stage-head{
+  font-size:13px;font-weight:800;color:var(--dim);letter-spacing:1px;
+  padding:14px 4px 8px;
+}
+
+/* 异色高亮：词中组合/词根/例句中的目标词 */
+.hl-word{color:var(--accent);font-weight:800}
+
 /* 后台播放询问面板（磨耳朵首次点播放时出现） */
 @keyframes packhint-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 

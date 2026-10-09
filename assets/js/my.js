@@ -170,7 +170,7 @@
       list: document.getElementById('my-list'),
       empty: document.getElementById('my-empty'),
       tabSentsN: document.getElementById('tab-sents-n'),
-      setLetters: document.getElementById('set-letters')
+      setLetters: null
     };
 
     el.btnImport.addEventListener('click', function () { togglePanel(el.panelImport); });
@@ -181,13 +181,6 @@
       el.restoreFile.value = '';
     });
     el.importSents.addEventListener('click', doImport);
-
-    el.setLetters.checked = !!Store.settings().lettersStage;
-    el.setLetters.addEventListener('change', function () {
-      Store.settings({ lettersStage: el.setLetters.checked });
-      App.notify(el.setLetters.checked ? '熟读将包含字母阶段，8 天一轮。' : '已恢复 7 天一轮。', 2200);
-      location.reload(); // 轮转天数变化，重载最稳
-    });
 
     refreshAll();
   }
