@@ -87,6 +87,38 @@
     return safe.replace(re, '<span class="hl-word">$1</span>');
   }
 
+  /* ---------- 词库词根匹配表：单词 → 构词拆解 ----------
+     从 ROOTS 词族拍平出"单词→拆解"映射，让锚点/切片栏
+     复用与词根区一致的异色规则：词在词族里才亮词根块 */
+  var wordPartsCache = null;
+  function partsOf(word) {
+    if (!wordPartsCache) {
+      wordPartsCache = {};
+      ROOTS.list.forEach(function (r) {
+        r.w.forEach(function (it) {
+          var k = String(it[0] || '').toLowerCase();
+          if (k && it[2] && !wordPartsCache[k]) wordPartsCache[k] = it[2];
+        });
+      });
+    }
+    return wordPartsCache[String(word).toLowerCase()] || '';
+  }
+
+  /* 词组高亮：锚点词整体异色；词组中其他词若在词库词族，
+     按构词拆解异色其词根字母块（与词根区同规则） */
+  function highlightPhrase(phrase, anchor) {
+    return String(phrase).split(/(\s+)/).map(function (tok) {
+      if (!tok || /^\s+$/.test(tok)) return escapeHtml(tok);
+      var bare = tok.replace(/[^A-Za-z-]/g, '');
+      if (bare && bare.toLowerCase() === String(anchor).toLowerCase()) {
+        return highlightInSentence(tok, anchor);   // 锚点词整体异色
+      }
+      var parts = bare ? partsOf(bare) : '';
+      if (parts) return highlightRoots(tok, parts); // 词库词：词根块异色
+      return escapeHtml(tok);
+    }).join('');
+  }
+
   /* ---------- 渲染 · 词根模式 ---------- */
   function renderRoots() {
     el.list.innerHTML = '';
@@ -205,14 +237,14 @@
 
         var note = document.createElement('div');
         note.className = 'slice-note';
-        note.textContent = '现场沟通 = 指认锚点名词 + 说状态；词组中的锚点词已异色';
+        note.textContent = '现场沟通 = 指认锚点名词 + 说状态；锚点词与词库词根均已异色';
         body.appendChild(note);
 
-        // 锚点本名一行（可点读）
+        // 锚点本名一行（可点读；若在词库词族中，词根块异色）
         var selfRow = document.createElement('div');
         selfRow.className = 'root-word';
         selfRow.innerHTML =
-          '<span class="rw-main">' + escapeHtml(a.a) + '</span>' +
+          '<span class="rw-main">' + highlightRoots(a.a, partsOf(a.a)) + '</span>' +
           '<span class="rw-zh">' + escapeHtml(a.zh) + '</span>';
         selfRow.addEventListener('click', function () { speak(a.a); });
         body.appendChild(selfRow);
@@ -221,7 +253,7 @@
           var row = document.createElement('div');
           row.className = 'root-word anchor-row';
           row.innerHTML =
-            '<span class="rw-main">' + highlightInSentence(p.w, a.a) + '</span>' +
+            '<span class="rw-main">' + highlightPhrase(p.w, a.a) + '</span>' +
             '<span class="rw-zh">' + escapeHtml(p.zh) + '</span>';
           row.addEventListener('click', function () { speak(p.w); });
           body.appendChild(row);
@@ -273,7 +305,7 @@
           var row = document.createElement('div');
           row.className = 'root-word';
           row.innerHTML =
-            '<span class="rw-main">' + escapeHtml(it.w) + '</span>' +
+            '<span class="rw-main">' + highlightRoots(it.w, partsOf(it.w)) + '</span>' +
             '<span class="rw-zh">' + escapeHtml(it.zh) + '</span>';
           row.addEventListener('click', function () { speak(it.w); });
           body.appendChild(row);

@@ -1,103 +1,15 @@
 /* ============================================================
-   邪修英语 · 自然拼读数据（46 规则组 / 7 阶段 + 字母前置组）
+   邪修英语 · 自然拼读数据（仅 2-3 字母组合，阶段2-7 重编号 1-6）
    词结构：{ w: 单词, ipa: 音标, zh: 中文释义 }
-   M1 已填充：阶段0 字母(26) / 阶段1 短元音(50) / 阶段2 辅音组合(72)
-   阶段3-7：组骨架已建，词池 M2 填充
-   Tricky Words：M2 填充
+   已移除单字母内容：原阶段0（26字母）与原阶段1（短元音 CVC）
+   保留：辅音组合 / 辅音连缀 / Magic E / 长元音组合 / r 控制 / 特殊拼写
+   Tricky Words：不规则高频词保留
    ============================================================ */
 window.PHONICS = {
   stages: [
-    /* ---------- 阶段0：字母单音（默认跳过，可在设置打开） ---------- */
+    /* ---------- 阶段1：辅音组合 ---------- */
     {
-      id: 0, key: 'letters', name: '字母单音',
-      groups: [
-        {
-          id: 'abc', title: '26 个字母基础发音', pattern: 'a → z',
-          tip: '字母最常见的发音，成人快速带过即可。',
-          words: [
-            {w:'apple',ipa:'/ˈæpl/',zh:'苹果'},{w:'ball',ipa:'/bɔːl/',zh:'球'},
-            {w:'cat',ipa:'/kæt/',zh:'猫'},{w:'dog',ipa:'/dɒɡ/',zh:'狗'},
-            {w:'egg',ipa:'/eɡ/',zh:'鸡蛋'},{w:'fish',ipa:'/fɪʃ/',zh:'鱼'},
-            {w:'goat',ipa:'/ɡəʊt/',zh:'山羊'},{w:'hat',ipa:'/hæt/',zh:'帽子'},
-            {w:'igloo',ipa:'/ˈɪɡluː/',zh:'冰屋'},{w:'jam',ipa:'/dʒæm/',zh:'果酱'},
-            {w:'king',ipa:'/kɪŋ/',zh:'国王'},{w:'lion',ipa:'/ˈlaɪən/',zh:'狮子'},
-            {w:'map',ipa:'/mæp/',zh:'地图'},{w:'net',ipa:'/net/',zh:'网'},
-            {w:'octopus',ipa:'/ˈɒktəpəs/',zh:'章鱼'},{w:'pen',ipa:'/pen/',zh:'钢笔'},
-            {w:'queen',ipa:'/kwiːn/',zh:'女王'},{w:'rat',ipa:'/ræt/',zh:'老鼠'},
-            {w:'sun',ipa:'/sʌn/',zh:'太阳'},{w:'tiger',ipa:'/ˈtaɪɡə/',zh:'老虎'},
-            {w:'umbrella',ipa:'/ʌmˈbrelə/',zh:'雨伞'},{w:'van',ipa:'/væn/',zh:'面包车'},
-            {w:'watch',ipa:'/wɒtʃ/',zh:'手表'},{w:'box',ipa:'/bɒks/',zh:'盒子（x=/ks/）'},
-            {w:'yo-yo',ipa:'/ˈjəʊjəʊ/',zh:'悠悠球'},{w:'zoo',ipa:'/zuː/',zh:'动物园'}
-          ]
-        }
-      ]
-    },
-
-    /* ---------- 阶段1：短元音 CVC ---------- */
-    {
-      id: 1, key: 'short-vowels', name: '短元音 CVC',
-      groups: [
-        {
-          id:'sv-a', title:'短元音 a', pattern:'/æ/ 如 cat',
-          tip:'嘴张大，嘴角向两侧，短促的“哎”。',
-          words:[
-            {w:'cat',ipa:'/kæt/',zh:'猫'},{w:'bag',ipa:'/bæɡ/',zh:'袋子'},
-            {w:'map',ipa:'/mæp/',zh:'地图'},{w:'hat',ipa:'/hæt/',zh:'帽子'},
-            {w:'fan',ipa:'/fæn/',zh:'风扇；粉丝'},{w:'bat',ipa:'/bæt/',zh:'球棒；蝙蝠'},
-            {w:'jam',ipa:'/dʒæm/',zh:'果酱；卡住'},{w:'van',ipa:'/væn/',zh:'面包车'},
-            {w:'cap',ipa:'/kæp/',zh:'帽子'},{w:'rat',ipa:'/ræt/',zh:'老鼠'}
-          ]
-        },
-        {
-          id:'sv-e', title:'短元音 e', pattern:'/e/ 如 bed',
-          tip:'嘴半开，短促的“哎”，比 /æ/ 嘴张小。',
-          words:[
-            {w:'bed',ipa:'/bed/',zh:'床'},{w:'red',ipa:'/red/',zh:'红色'},
-            {w:'pen',ipa:'/pen/',zh:'钢笔'},{w:'ten',ipa:'/ten/',zh:'十'},
-            {w:'hen',ipa:'/hen/',zh:'母鸡'},{w:'leg',ipa:'/leɡ/',zh:'腿'},
-            {w:'net',ipa:'/net/',zh:'网'},{w:'web',ipa:'/web/',zh:'网'},
-            {w:'jet',ipa:'/dʒet/',zh:'喷气式飞机'},{w:'wet',ipa:'/wet/',zh:'湿的'}
-          ]
-        },
-        {
-          id:'sv-i', title:'短元音 i', pattern:'/ɪ/ 如 sit',
-          tip:'短促放松的“伊”，不要读成长的 /iː/。',
-          words:[
-            {w:'sit',ipa:'/sɪt/',zh:'坐'},{w:'big',ipa:'/bɪɡ/',zh:'大的'},
-            {w:'pig',ipa:'/pɪɡ/',zh:'猪'},{w:'six',ipa:'/sɪks/',zh:'六'},
-            {w:'fin',ipa:'/fɪn/',zh:'鱼鳍'},{w:'lid',ipa:'/lɪd/',zh:'盖子'},
-            {w:'dip',ipa:'/dɪp/',zh:'蘸；浸'},{w:'mix',ipa:'/mɪks/',zh:'混合'},
-            {w:'rib',ipa:'/rɪb/',zh:'肋骨'},{w:'win',ipa:'/wɪn/',zh:'赢'}
-          ]
-        },
-        {
-          id:'sv-o', title:'短元音 o', pattern:'/ɒ/ 如 hot',
-          tip:'嘴张圆，短促的“奥”。',
-          words:[
-            {w:'dog',ipa:'/dɒɡ/',zh:'狗'},{w:'hot',ipa:'/hɒt/',zh:'热的'},
-            {w:'box',ipa:'/bɒks/',zh:'盒子'},{w:'pot',ipa:'/pɒt/',zh:'锅'},
-            {w:'mop',ipa:'/mɒp/',zh:'拖把'},{w:'fox',ipa:'/fɒks/',zh:'狐狸'},
-            {w:'log',ipa:'/lɒɡ/',zh:'原木；日志'},{w:'top',ipa:'/tɒp/',zh:'顶部'},
-            {w:'cob',ipa:'/kɒb/',zh:'玉米穗'},{w:'jog',ipa:'/dʒɒɡ/',zh:'慢跑'}
-          ]
-        },
-        {
-          id:'sv-u', title:'短元音 u', pattern:'/ʌ/ 如 cup',
-          tip:'嘴自然张开，喉咙放松的短促“阿”。',
-          words:[
-            {w:'cup',ipa:'/kʌp/',zh:'杯子'},{w:'sun',ipa:'/sʌn/',zh:'太阳'},
-            {w:'bus',ipa:'/bʌs/',zh:'公共汽车'},{w:'run',ipa:'/rʌn/',zh:'跑'},
-            {w:'mud',ipa:'/mʌd/',zh:'泥'},{w:'cut',ipa:'/kʌt/',zh:'切'},
-            {w:'bug',ipa:'/bʌɡ/',zh:'虫子；故障'},{w:'hug',ipa:'/hʌɡ/',zh:'拥抱'},
-            {w:'nut',ipa:'/nʌt/',zh:'坚果'},{w:'jug',ipa:'/dʒʌɡ/',zh:'壶'}
-          ]
-        }
-      ]
-    },
-
-    /* ---------- 阶段2：辅音组合 ---------- */
-    {
-      id: 2, key: 'consonant-digraphs', name: '辅音组合',
+      id: 1, key: 'consonant-digraphs', name: '辅音组合',
       groups: [
         {
           id:'dg-sh', title:'辅音组合 sh', pattern:'/ʃ/',
@@ -192,9 +104,9 @@ window.PHONICS = {
       ]
     },
 
-    /* ---------- 阶段3：辅音连缀（M2 填充） ---------- */
+    /* ---------- 阶段2：辅音连缀 ---------- */
     {
-      id: 3, key: 'consonant-blends', name: '辅音连缀',
+      id: 2, key: 'consonant-blends', name: '辅音连缀',
       groups: [
         {id:'bl-l', title:'l 家族连缀', pattern:'bl cl fl gl pl sl', tip:'两个辅音都要发音，快速滑过，中间不加元音。',
           words:[
@@ -236,9 +148,9 @@ window.PHONICS = {
       ]
     },
 
-    /* ---------- 阶段4：Magic E ---------- */
+    /* ---------- 阶段3：Magic E ---------- */
     {
-      id: 4, key: 'magic-e', name: 'Magic E',
+      id: 3, key: 'magic-e', name: 'Magic E',
       groups: [
         {id:'me-a', title:'Magic E：a_e', pattern:'/eɪ/', tip:'词尾哑巴 e，前面 a 读字母本身的名字 /eɪ/。',
           words:[
@@ -273,9 +185,9 @@ window.PHONICS = {
       ]
     },
 
-    /* ---------- 阶段5：长元音组合 ---------- */
+    /* ---------- 阶段4：长元音组合 ---------- */
     {
-      id: 5, key: 'long-vowel-teams', name: '长元音组合',
+      id: 4, key: 'long-vowel-teams', name: '长元音组合',
       groups: [
         {id:'lv-aiay', title:'元音组合 ai / ay', pattern:'/eɪ/', tip:'“俩兄弟走路，a 说话”，a 读名，i/y 不发音。',
           words:[
@@ -325,9 +237,9 @@ window.PHONICS = {
       ]
     },
 
-    /* ---------- 阶段6：复合元音 & r 控制音 ---------- */
+    /* ---------- 阶段5：复合元音 & r 控制音 ---------- */
     {
-      id: 6, key: 'diphthongs-r', name: '复合元音 & r 音',
+      id: 5, key: 'diphthongs-r', name: '复合元音 & r 音',
       groups: [
         {id:'rv-ooshort', title:'oo 短音', pattern:'/ʊ/ 如 book', tip:'短促放松的“乌”。',
           words:[
@@ -404,9 +316,9 @@ window.PHONICS = {
       ]
     },
 
-    /* ---------- 阶段7：特殊拼写模式 ---------- */
+    /* ---------- 阶段6：特殊拼写模式 ---------- */
     {
-      id: 7, key: 'special-patterns', name: '特殊拼写',
+      id: 6, key: 'special-patterns', name: '特殊拼写',
       groups: [
         {id:'sp-softcg', title:'软音 c / g', pattern:'city / gym', tip:'c/g 后接 e/i/y 时发软音 /s/ /dʒ/。',
           words:[
