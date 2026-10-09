@@ -115,6 +115,18 @@
   }
   function show() { mode === 'words' ? showWord() : showSentence(); }
 
+  /* ---------- 自适应衔接间隔 ----------
+     按刚播完音频的实际时长缩放用户设定的间隔：
+     短单词（<1.5s）缩到 0.8 倍，长句子（>4s）放大到 2 倍，
+     长的内容多留消化时间，短的不拖沓 */
+  function adaptiveGap() {
+    var base = Store.settings().gap || 1500;
+    var d = AudioEngine.lastDuration();
+    if (!d || !isFinite(d) || d <= 0) return base;
+    var f = Math.max(0.8, Math.min(2.2, d / 1.8));
+    return Math.round(base * f);
+  }
+
   /* ---------- 播放主循环 ---------- */
   function loop(token) {
     return Promise.resolve().then(function again() {
@@ -132,7 +144,7 @@
           var sc = scenes()[sIdx];
           var nx = sc.items[(iIdx + 1) % sc.items.length];
           if (nx) AudioEngine.preload('en', nx.w);
-          return wait(s.gap);
+          return wait(adaptiveGap());   // 间隔随英文长度自适应
         }).then(function () {
           if (!playing || token !== loopToken) return;
           return AudioEngine.speakZh(it.zh, 0.95);
@@ -152,7 +164,7 @@
       showSentence();
       return AudioEngine.speakZh(item.zh || '', 0.95).then(function () {
         if (!playing || token !== loopToken) return;
-        return wait(s.gap);
+        return wait(adaptiveGap());   // 中文长短不同，间隔自适应
       }).then(function () {
         if (!playing || token !== loopToken) return;
         // 中文播完的间隙预热下一句英文
@@ -177,7 +189,7 @@
         Store.get().stats.listenWords++;
         sPos++;
         if (sPos >= sQueue.length) { rebuildSentences(); sPos = 0; }
-        return wait(Math.min(900, s.gap));
+        return wait(adaptiveGap());   // 句尾间隔同样自适应（英文越长收尾越缓）
       }).then(function () {
         if (!playing || token !== loopToken) return;
         return again();

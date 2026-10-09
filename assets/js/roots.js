@@ -12,7 +12,7 @@
   var kw = '';
   var expanded = {};      // 词根展开状态（键=root）
   var expandedSlice = {}; // 切片展开状态（键=c）
-  var mode = 'roots';     // roots / slices
+  var mode = 'roots';     // roots / slices / anchors
 
   /* ---------- 搜索匹配 ---------- */
   function matchRoot(root) {
@@ -162,6 +162,79 @@
     el.count.textContent = '（' + ROOTS.list.length + ' 词根 · ' + totalWords + ' 词）';
   }
 
+  /* ---------- 渲染 · 锚点名词模式 ---------- */
+  function matchAnchor(a) {
+    if (!kw) return true;
+    var k = kw.toLowerCase();
+    if (a.a.toLowerCase().indexOf(k) >= 0) return true;
+    if (a.zh.indexOf(kw) >= 0) return true;
+    for (var i = 0; i < a.phr.length; i++) {
+      if (a.phr[i].w.toLowerCase().indexOf(k) >= 0) return true;
+      if (a.phr[i].zh.indexOf(kw) >= 0) return true;
+    }
+    return false;
+  }
+
+  function renderAnchors() {
+    el.list.innerHTML = '';
+    var shown = 0;
+    var totalPhr = ANCHORS.list.reduce(function (n, a) { return n + a.phr.length; }, 0);
+
+    ANCHORS.list.forEach(function (a) {
+      if (!matchAnchor(a)) return;
+      shown++;
+      var item = document.createElement('div');
+      item.className = 'root-item';
+
+      var head = document.createElement('button');
+      head.className = 'root-head slice-head';
+      head.innerHTML =
+        '<span class="root-arrow">' + (expanded[a.a] || kw ? '▾' : '▸') + '</span>' +
+        '<span class="root-key">' + escapeHtml(a.a) + '</span>' +
+        '<span class="root-mean">' + escapeHtml(a.zh) + '</span>' +
+        '<span class="root-meta">' + a.phr.length + '组</span>';
+      head.addEventListener('click', function () {
+        expanded[a.a] = !expanded[a.a];
+        render();
+      });
+      item.appendChild(head);
+
+      if (expanded[a.a] || kw) {
+        var body = document.createElement('div');
+        body.className = 'root-body';
+
+        var note = document.createElement('div');
+        note.className = 'slice-note';
+        note.textContent = '现场沟通 = 指认锚点名词 + 说状态；词组中的锚点词已异色';
+        body.appendChild(note);
+
+        // 锚点本名一行（可点读）
+        var selfRow = document.createElement('div');
+        selfRow.className = 'root-word';
+        selfRow.innerHTML =
+          '<span class="rw-main">' + escapeHtml(a.a) + '</span>' +
+          '<span class="rw-zh">' + escapeHtml(a.zh) + '</span>';
+        selfRow.addEventListener('click', function () { speak(a.a); });
+        body.appendChild(selfRow);
+
+        a.phr.forEach(function (p) {
+          var row = document.createElement('div');
+          row.className = 'root-word anchor-row';
+          row.innerHTML =
+            '<span class="rw-main">' + highlightInSentence(p.w, a.a) + '</span>' +
+            '<span class="rw-zh">' + escapeHtml(p.zh) + '</span>';
+          row.addEventListener('click', function () { speak(p.w); });
+          body.appendChild(row);
+        });
+        item.appendChild(body);
+      }
+      el.list.appendChild(item);
+    });
+
+    el.empty.classList.toggle('hidden', shown > 0);
+    el.count.textContent = '（' + ANCHORS.list.length + ' 锚点 · ' + totalPhr + ' 词组）';
+  }
+
   /* ---------- 渲染 · 概念切片模式 ---------- */
   function renderSlices() {
     el.list.innerHTML = '';
@@ -221,6 +294,7 @@
 
   function render() {
     if (mode === 'slices') renderSlices();
+    else if (mode === 'anchors') renderAnchors();
     else renderRoots();
   }
 

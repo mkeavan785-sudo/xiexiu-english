@@ -12,6 +12,7 @@
   var playGen = 0;
   var curAudio = null;     // 当前播放的单例媒体元素
   var preloads = [];       // 预热去重表（最多 8 条）
+  var lastDur = 0;         // 最近一次本地播放的音频时长（秒），供自适应间隔
 
   var synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
   var voices = [];
@@ -129,6 +130,7 @@
           settled = true;
           clearTimeout(timer);
           mediaBusy = false;             // 传输结束，放行预热队列
+          try { if (m.duration && isFinite(m.duration)) lastDur = m.duration; } catch (e) {}
           if (curBlob) { try { URL.revokeObjectURL(curBlob); } catch (e) {} }
           if (curAudio === m) curAudio = null;
           resolve(ok);
@@ -410,6 +412,8 @@
       if (curAudio) { try { curAudio.volume = playVolume(curAudio.__lang || 'en'); } catch (e) {} }
     },
     getVolume: function () { return userVolume; },
+    /** 最近一次本地音频的实际时长（秒），供自适应衔接间隔 */
+    lastDuration: function () { return lastDur; },
     /** MediaSession：锁屏/后台显示当前词条，提升后台连续播放存活率 */
     setMediaInfo: function (title, artist) {
       try {

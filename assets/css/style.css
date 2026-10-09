@@ -488,6 +488,10 @@ button{background:none;border:none;cursor:pointer}
 }
 .slice-ctx::before{content:'▸ ';color:var(--accent)}
 
+/* 锚点词组行：词组较长，放开宽度不截断 */
+.anchor-row{flex-wrap:wrap;height:auto}
+.anchor-row .rw-main{max-width:60%;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.4}
+
 /* ---------- 拼读页（上块速听 + 下块折叠点读） ---------- */
 .blends-top,.groups-fold{margin-bottom:16px}
 .blends-head,.groups-head{

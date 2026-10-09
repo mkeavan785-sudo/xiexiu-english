@@ -34,6 +34,7 @@ load('data-roots.js');
 load('data-sentences.js');
 load('data-immersion.js');
 load('data-slices.js');
+load('data-anchors.js');
 load('data-blends.js');
 const W = global.window;
 
@@ -72,6 +73,15 @@ W.ROOTS.list.forEach(r => (r.w || []).forEach(it => {
 // 拼读速听：播报文本（字母名+整词，内嵌两遍），只发英文
 (W.BLENDS ? W.BLENDS.list : []).forEach(b => {
   if (b.say) en.add(norm(b.say));
+});
+
+// 锚点名词：锚点本名 + 配套词组（英语和中文翻译均朗读）
+(W.ANCHORS ? W.ANCHORS.list : []).forEach(a => {
+  if (a.a) en.add(norm(a.a));
+  (a.phr || []).forEach(p => {
+    if (p.w) en.add(norm(p.w));
+    if (p.zh) zh.add(norm(p.zh));
+  });
 });
 
 /* ---- 校验音频文件并生成映射 ---- */
